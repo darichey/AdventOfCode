@@ -1,0 +1,14 @@
+name:                AdventOfCode2019
+version:             0.1
+homepage:            https://github.com/darichey/AdventOfCode2019#readme
+license:             MIT
+license-file:        LICENSE
+build-type:          Simple
+cabal-version:       >=1.10
+extra-source-files:  README.md
+
+executable AdventOfCode2019
+  hs-source-dirs:      src
+  main-is:             Main.hs
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5
