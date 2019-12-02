@@ -1,4 +1,4 @@
-module Day02 where
+module Day02 (solutions) where
 
 import Data.List.Split
 import Data.Vector
@@ -6,7 +6,7 @@ import Data.Vector
 type Program = Vector Int
 
 getInput :: IO Program
-getInput = fromList <$> (fmap read . (splitOn ",")) <$> readFile "input/day2.txt"
+getInput = (fromList . (fmap read) . (splitOn ",")) <$> readFile "input/day2.txt"
 
 solve :: Int -> Int -> Program -> Int
 solve noun verb prog = Data.Vector.head (solve' 0 (fix prog))
@@ -43,8 +43,7 @@ day02b prog = noun * 100 + verb
 --                                                      verb <- [0..99],
 --                                                      solve noun verb prog == 19690720]
 
-printSolutions :: IO ()
-printSolutions = do
+solutions :: IO (Int, Int)
+solutions = do
     input <- getInput
-    print $ day02a input
-    print $ day02b input
+    return (day02a input, day02b input)
