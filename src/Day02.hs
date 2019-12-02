@@ -1,41 +1,38 @@
 module Day02 where
 
-import Data.List
-import Data.Maybe
+import Data.List.Split
+import Data.Vector
 
-getInput :: IO [Int]
-getInput = (fmap read . words . f) <$> readFile "input/day2.txt"
-    where f xs = fmap (\x -> if x == ',' then ' ' else x) xs
-    
-update :: [a] -> Int -> a -> [a]
-update (x:xs) idx y =
-    if idx == 0 then y:xs
-    else x : update xs (idx - 1) y
+type Program = Vector Int
 
-solve :: Int -> Int -> [Int] -> Int
-solve noun verb tape = (day02a' 0 (fix tape)) !! 0
+getInput :: IO Program
+getInput = fromList <$> (fmap read . (splitOn ",")) <$> readFile "input/day2.txt"
+
+solve :: Int -> Int -> Program -> Int
+solve noun verb prog = Data.Vector.head (solve' 0 (fix prog))
     where
-        day02a' :: Int -> [Int] -> [Int]
-        day02a' opIdx tape = 
-            if op == 99 then tape
-            else day02a' (opIdx + 4) (f op opIdx tape)
+        solve' :: Int -> Program -> Program
+        solve' ptr prog =
+            case op of
+                1 -> solve' (ptr + 4) (prog // [(z, x + y)])
+                2 -> solve' (ptr + 4) (prog // [(z, x * y)])
+                99 -> prog
             where
-                op = (tape !! opIdx)
+                op = prog ! ptr
+                x  = prog ! (prog ! (ptr + 1))
+                y  = prog ! (prog ! (ptr + 2))
+                z  = prog ! (ptr + 3)
 
-        f :: Int -> Int -> [Int] -> [Int]
-        f op idx tape | op == 1 = update tape (tape !! (idx + 3)) ((tape !! (tape !! (idx + 1))) + (tape !! (tape !! (idx + 2)))) 
-                      | op == 2 = update tape (tape !! (idx + 3)) ((tape !! (tape !! (idx + 1))) * (tape !! (tape !! (idx + 2))))
-                      | otherwise = undefined
+        fix :: Program -> Program
+        fix prog = prog // [(1, noun), (2, verb)]
 
-        fix :: [Int] -> [Int]
-        fix tape = update (update tape 1 noun) 2 verb
-
-day02a :: [Int] -> Int
+day02a :: Program -> Int
 day02a = solve 12 2
 
-day02b :: [Int] -> (Int, Int)
-day02b tape = fromJust $ find (\p -> (solve (fst p) (snd p) tape) == 19690720) pairs
-    where pairs = [(x,y) | x <- [0..99], y <- [0..99]]
+day02b :: Program -> (Int, Int)
+day02b prog = Prelude.head [(noun,verb) | noun <- [0..99],
+                                          verb <- [0..99],
+                                          solve noun verb prog == 19690720]
 
 printSolutions :: IO ()
 printSolutions = do
