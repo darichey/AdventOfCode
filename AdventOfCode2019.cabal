@@ -1,14 +1,28 @@
-name:                AdventOfCode2019
-version:             0.1
-homepage:            https://github.com/darichey/AdventOfCode2019#readme
-license:             MIT
-license-file:        LICENSE
-build-type:          Simple
-cabal-version:       >=1.10
-extra-source-files:  README.md
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: d386a4e4c6cb8fff07089b9d3262e32ca77f74d357a6782cd240b131b10d9abf
+
+name:           AdventOfCode2019
+version:        0.1
+homepage:       https://github.com/darichey/AdventOfCode2019#readme
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
 
 executable AdventOfCode2019
-  hs-source-dirs:      src
-  main-is:             Main.hs
-  default-language:    Haskell2010
-  build-depends:       base >= 4.7 && < 5
+  main-is: Main.hs
+  other-modules:
+      Day01
+      Day02
+      Paths_AdventOfCode2019
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , split >=0.2.3.3
+    , vector >=0.12.0.3
+  default-language: Haskell2010

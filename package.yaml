@@ -1,0 +1,13 @@
+name: AdventOfCode2019
+version: 0.1
+homepage: https://github.com/darichey/AdventOfCode2019#readme
+license: MIT
+
+dependencies:
+- base >= 4.7 && < 5
+- split >= 0.2.3.3
+- vector >= 0.12.0.3
+
+executable:
+  main: Main.hs
+  source-dirs: src
