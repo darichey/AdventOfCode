@@ -29,10 +29,19 @@ solve noun verb prog = Data.Vector.head (solve' 0 (fix prog))
 day02a :: Program -> Int
 day02a = solve 12 2
 
-day02b :: Program -> (Int, Int)
-day02b prog = Prelude.head [(noun,verb) | noun <- [0..99],
-                                          verb <- [0..99],
-                                          solve noun verb prog == 19690720]
+day02b :: Program -> Int
+day02b prog = noun * 100 + verb
+    where
+        res1 = solve 0 0 prog
+        res2 = solve 1 0 prog
+        (noun, verb) = divMod (19690720 - res1) (res2 - res1)
+
+-- Bruteforce Solution for part two
+-- day02b :: Program -> Int
+-- day02b prog = noun * 100 + verb
+--     where (noun, verb) = Prelude.head [(noun,verb) | noun <- [0..99],
+--                                                      verb <- [0..99],
+--                                                      solve noun verb prog == 19690720]
 
 printSolutions :: IO ()
 printSolutions = do
