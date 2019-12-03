@@ -2,11 +2,13 @@ module Main where
 
 import Day01
 import Day02
+import Day03
 
 main :: IO ()
 main = do
     printSolutions "Day 1" Day01.solutions
     printSolutions "Day 2" Day02.solutions
+    printSolutions "Day 3" Day03.solutions
 
 printSolutions :: String -> IO (Int, Int) -> IO ()
 printSolutions day solsM = do
