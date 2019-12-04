@@ -23,10 +23,10 @@ both :: (a -> Bool) -> (a -> Bool) -> a -> Bool
 both f g x = (f x) && (g x)
 
 day04a :: [String] -> Int
-day04a = length . filter (both twoAdjacent increasing)
+day04a = length . filter (both increasing twoAdjacent)
 
 day04b :: [String] -> Int
-day04b = length . filter (both exactlyPair increasing)
+day04b = length . filter (both increasing exactlyPair)
 
 solutions :: IO (Int, Int)
 solutions = do
