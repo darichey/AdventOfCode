@@ -1,5 +1,5 @@
 -- https://adventofcode.com/2019/day/2
-module Day02 (solutions, solve, getInput) where
+module Day02 (solutions) where
 
 import Data.List.Split
 import Data.Vector
