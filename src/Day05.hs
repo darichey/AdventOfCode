@@ -3,104 +3,116 @@ module Day05 where
 import Data.List.Split
 import qualified Data.Vector as V
 
-type Program = V.Vector Int
-data Op = Add | Mul | In | Out | JumpT | JumpF | Less | Equals | Terminate deriving (Show)
-data ParamMode = Pos | Imm deriving (Show)
-data Ins = Ins Op ParamMode ParamMode ParamMode deriving (Show)
+data Program = Program (V.Vector Int) deriving Show
 
-parseIns :: Int -> Ins
-parseIns ins = Ins (op de) (mode c) (mode b) (mode a)
+getInput :: IO Program
+getInput = (Program . V.fromList . (fmap read) . (splitOn ",")) <$> readFile "input/day5.txt"
+
+valueOf :: Param -> Program -> Int
+valueOf (Pos x) prog = valueAt x prog
+valueOf (Imm x) _    = x
+
+valueAt :: Int -> Program -> Int
+valueAt x (Program code) = code V.! x
+
+update :: Param -> Int -> Program -> Program
+update (Pos z) xy (Program code) = Program $ code V.// [(z, xy)]
+
+data Param = Pos Int
+           | Imm Int 
+           deriving Show
+
+data Ins = Add Param Param Param
+         | Mul Param Param Param
+         | In Param
+         | Out Param
+         | JumpT Param Param
+         | JumpF Param Param
+         | Less Param Param Param
+         | Equals Param Param Param
+         | Terminate
+         deriving Show
+
+parseIns :: Int -> Program -> Ins
+parseIns ptr prog =
+    case de of
+        "01" -> Add    (param 1 c) (param 2 b) (param 3 a)
+        "02" -> Mul    (param 1 c) (param 2 b) (param 3 a)
+        "03" -> In     (param 1 c)
+        "04" -> Out    (param 1 c)
+        "05" -> JumpT  (param 1 c) (param 2 b)
+        "06" -> JumpF  (param 1 c) (param 2 b)
+        "07" -> Less   (param 1 c) (param 2 b) (param 3 a)
+        "08" -> Equals (param 1 c) (param 2 b) (param 3 a)
+        "99" -> Terminate
     where
-        (a:b:c:de) = leftPad '0' (show ins) 5
+        (a:b:c:de) = leftPad '0' (show (valueAt ptr prog)) 5
 
         leftPad :: Char -> String -> Int -> String
         leftPad with str num = (replicate (num - length str) with) ++ str
 
-        op :: String -> Op
-        op s = case s of
-            "01" -> Add
-            "02" -> Mul
-            "03" -> In
-            "04" -> Out
-            "05" -> JumpT
-            "06" -> JumpF
-            "07" -> Less
-            "08" -> Equals
-            "99" -> Terminate
-
-        mode :: Char -> ParamMode
-        mode c = case c of
-            '0' -> Pos
-            '1' -> Imm
+        param :: Int -> Char -> Param
+        param offset mode = case mode of
+            '0' -> Pos (valueAt (ptr + offset) prog)
+            '1' -> Imm (valueAt (ptr + offset) prog)
 
 run :: [Int] -> Program -> [Int]
 run input = fst . run' 0 input []
+    -- where
+run' :: Int -> [Int] -> [Int] -> Program -> ([Int], Program)
+run' (-1) _ output prog = (output, prog)
+run' ptr input output prog = run' ptr' input' output' prog'
     where
-        run' :: Int -> [Int] -> [Int] -> Program -> ([Int], Program)
-        run' (-1) _     output prog = (output, prog)
-        run' ptr  input output prog = run' ptr' input' (output' ++ output) prog'
-            where
-                ins = parseIns $ prog V.! ptr
-                (ptr', input', output', prog') = apply ptr input prog ins
+        f = apply (parseIns ptr prog)
+        (ptr', input', output', prog') = f ptr input output prog
 
-apply :: Int -> [Int] -> Program -> Ins -> (Int, [Int], [Int], Program)
-apply ptr input prog (Ins Add mode1 mode2 _) = (ptr + 4, input, [], prog')
-    where
-        x = param (ptr + 1) mode1 prog
-        y = param (ptr + 2) mode2 prog
-        z = prog V.! (ptr + 3)
-        prog' = prog V.// [(z, x + y)]
+apply :: Ins -> Int -> [Int] -> [Int] -> Program -> (Int, [Int], [Int], Program)
+apply ins ptr input output prog = case ins of
+    (Add p1 p2 p3) -> (ptr + 4, input, output, prog')
+        where
+            x = valueOf p1 prog
+            y = valueOf p2 prog
+            prog' = update p3 (x + y) prog
 
-apply ptr input prog (Ins Mul mode1 mode2 _) = (ptr + 4, input, [], prog')
-    where
-        x = param (ptr + 1) mode1 prog
-        y = param (ptr + 2) mode2 prog
-        z = prog V.! (ptr + 3)
-        prog' = prog V.// [(z, x * y)]
+    (Mul p1 p2 p3) -> (ptr + 4, input, output, prog')
+        where
+            x = valueOf p1 prog
+            y = valueOf p2 prog
+            prog' = update p3 (x * y) prog
 
-apply ptr input prog (Ins In mode1 _ _) = (ptr + 2, tail input, [], prog')
-    where
-        x = prog V.! (ptr + 1)
-        prog' = prog V.// [(x, head input)]
+    (In p1) -> (ptr + 2, tail input, output, prog')
+        where
+            prog' = update p1 (head input) prog
 
-apply ptr input prog (Ins Out mode1 _ _) = (ptr + 2, input, [x], prog)
-    where
-        x = param (ptr + 1) mode1 prog
+    (Out p1) -> (ptr + 2, input, x:output, prog)
+        where
+            x = valueOf p1 prog
 
-apply ptr input prog (Ins JumpT mode1 mode2 _) = (ptr', input, [], prog)
-    where
-        x = param (ptr + 1) mode1 prog
-        y = param (ptr + 2) mode2 prog
-        ptr' = if x /= 0 then y else ptr + 3
+    (JumpT p1 p2) -> (ptr', input, output, prog)
+        where
+            x = valueOf p1 prog
+            y = valueOf p2 prog
+            ptr' = if x /= 0 then y else ptr + 3
 
-apply ptr input prog (Ins JumpF mode1 mode2 _) = (ptr', input, [], prog)
-    where
-        x = param (ptr + 1) mode1 prog
-        y = param (ptr + 2) mode2 prog
-        ptr' = if x == 0 then y else ptr + 3
+    (JumpF p1 p2) -> (ptr', input, output, prog)
+        where
+            x = valueOf p1 prog
+            y = valueOf p2 prog
+            ptr' = if x == 0 then y else ptr + 3
 
-apply ptr input prog (Ins Less mode1 mode2 _) = (ptr + 4, input, [], prog')
-    where
-        x = param (ptr + 1) mode1 prog
-        y = param (ptr + 2) mode2 prog
-        z = prog V.! (ptr + 3)
-        prog' = prog V.// [(z, if x < y then 1 else 0)]
+    (Less p1 p2 p3) -> (ptr + 4, input, output, prog')
+        where
+            x = valueOf p1 prog
+            y = valueOf p2 prog
+            prog' = update p3 (if x < y then 1 else 0) prog
 
-apply ptr input prog (Ins Equals mode1 mode2 _) = (ptr + 4, input, [], prog')
-    where
-        x = param (ptr + 1) mode1 prog
-        y = param (ptr + 2) mode2 prog
-        z = prog V.! (ptr + 3)
-        prog' = prog V.// [(z, if x == y then 1 else 0)]
+    (Equals p1 p2 p3) -> (ptr + 4, input, output, prog')
+        where
+            x = valueOf p1 prog
+            y = valueOf p2 prog
+            prog' = update p3 (if x == y then 1 else 0) prog
 
-apply ptr input prog (Ins Terminate _ _ _) = (-1, input, [], prog)
-
-param :: Int -> ParamMode -> Program -> Int
-param ptr Pos prog = prog V.! (prog V.! ptr)
-param ptr Imm prog = prog V.! ptr
-
-getInput :: IO Program
-getInput = (V.fromList . (fmap read) . (splitOn ",")) <$> readFile "input/day5.txt"
+    Terminate -> (-1, input, output, prog)
 
 day05a :: Program -> Int
 day05a  = head . run [1]
