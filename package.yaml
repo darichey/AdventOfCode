@@ -1,6 +1,6 @@
 name: AdventOfCode2019
 version: 0.1
-homepage: https://github.com/darichey/AdventOfCode2019#readme
+github: "darichey/AdventOfCode2019"
 license: MIT
 
 dependencies:
