@@ -4,14 +4,19 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 865c2b2386f4165295dc1a4897d7763971357cbef70a60859644dc82cf80e6d3
+-- hash: 3efc8cd86993413c105e3ee494ae6e62bdd9d51bd2de2324fc6033a12d78af26
 
 name:           AdventOfCode2019
 version:        0.1
 homepage:       https://github.com/darichey/AdventOfCode2019#readme
+bug-reports:    https://github.com/darichey/AdventOfCode2019/issues
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/darichey/AdventOfCode2019
 
 executable AdventOfCode2019
   main-is: Main.hs
@@ -21,6 +26,7 @@ executable AdventOfCode2019
       Day03
       Day04
       Day05
+      Day06
       Paths_AdventOfCode2019
   hs-source-dirs:
       src
