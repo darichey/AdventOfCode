@@ -1,40 +1,38 @@
 module Day06 where
 
-import qualified Data.Graph.Inductive.Graph as G
-import Data.Graph.Inductive.PatriciaTree
-import Data.Graph.Inductive.Query.SP
-import Data.List.Split
-import qualified Data.Set as S
-import qualified Data.Map as M
+import Data.Tree
 import Data.Maybe
-import Data.Tuple
+import Data.List.Split
+import Control.Monad
+import qualified Data.Map as M
 
-type Orbits = (Gr String Int, M.Map String Int)
+type Orbits = Tree String
 
 getInput :: IO Orbits
 getInput = do
     content <- readFile "input/day6.txt"
-    let pairs = fmap ((splitOn ")") . lines) content
-    let nodes = zip (S.toList $ S.fromList $ (lines content) >>= (splitOn ")")) [0..]
-    let nodeMap = M.fromList nodes
-    let edges = (fmap (splitOn ")") (lines content)) >>= (\[x,y] -> [(fromJust $ M.lookup x nodeMap, fromJust $ M.lookup y nodeMap, 1), (fromJust $ M.lookup y nodeMap, fromJust $ M.lookup x nodeMap, 1)])
+    let edges = fmap ((\[x,y] -> (x,y)) . splitOn ")") (lines content)
+    let adjList = M.fromListWith (++) (fmap (\(a,b) -> (a,[b])) edges)
 
-    return $ (G.mkGraph (fmap swap nodes) edges, nodeMap)
+    return $ unfoldTree (\n -> (n, fromMaybe [] (M.lookup n adjList))) "COM"
 
 day06a :: Orbits -> Int
-day06a (graph, labels) = fromJust $ do
-    com <- M.lookup "COM" labels
-    let shortestPaths = spTree com graph
-    return $ sum $ fmap (snd . head . G.unLPath) shortestPaths
+day06a = sum . fmap (uncurry (*)) . zip [0..] . fmap length . levels
 
 day06b :: Orbits -> Int
-day06b (graph, labels) = (fromJust shortestPath) - 2
+day06b tree = x + y - 2
     where
-        shortestPath = do
-            you <- M.lookup "YOU" labels
-            san <- M.lookup "SAN" labels
-            length <- spLength you san graph
-            return length
+        a = fromJust $ pathTo "YOU" tree
+        b = fromJust $ pathTo "SAN" tree
+        c = length $ takeWhile (uncurry (==)) (zip a b)
+        x = (length a) - c
+        y = (length b) - c
+
+pathTo :: (Eq a) => a -> Tree a -> Maybe [a]
+pathTo n Node{rootLabel=root, subForest=children}
+    | root == n     = Just [n]
+    | null children = Nothing
+    | otherwise     = (root:) <$> (msum $ fmap (pathTo n) children)
 
 solutions :: IO (Int, Int)
 solutions = do
