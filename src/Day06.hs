@@ -20,13 +20,13 @@ day06a :: Orbits -> Int
 day06a = sum . fmap (uncurry (*)) . zip [0..] . fmap length . levels
 
 day06b :: Orbits -> Int
-day06b tree = x + y - 2
+day06b tree = lcaToYou + lcaToSan - 2
     where
-        a = fromJust $ pathTo "YOU" tree
-        b = fromJust $ pathTo "SAN" tree
-        c = length $ takeWhile (uncurry (==)) (zip a b)
-        x = (length a) - c
-        y = (length b) - c
+        toYou = fromJust $ pathTo "YOU" tree
+        toSan = fromJust $ pathTo "SAN" tree
+        common = length $ takeWhile (uncurry (==)) (zip toYou toSan)
+        lcaToYou = (length toYou) - common
+        lcaToSan = (length toSan) - common
 
 pathTo :: (Eq a) => a -> Tree a -> Maybe [a]
 pathTo n Node{rootLabel=root, subForest=children}
