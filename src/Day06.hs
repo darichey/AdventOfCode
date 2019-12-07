@@ -1,50 +1,40 @@
 module Day06 where
 
+import qualified Data.Graph.Inductive.Graph as G
+import Data.Graph.Inductive.PatriciaTree
+import Data.Graph.Inductive.Query.SP
 import Data.List.Split
-import Data.List
-import qualified Data.Map as M
-import Data.Function
-import Data.Tuple
-import Data.Maybe
 import qualified Data.Set as S
+import qualified Data.Map as M
+import Data.Maybe
+import Data.Tuple
 
-type Graph n = M.Map n [n]
-type Edge n = (n, n)
+type Orbits = (Gr String Int, M.Map String Int)
 
-numOrbits :: Graph String -> Int
-numOrbits orbits = sum $ allPaths
-    where
-        planets = S.toList $ S.fromList $ concat (M.elems orbits)
-        allPaths = (fmap (\n -> shortestPath "COM" n orbits) planets)
-
-getInput :: IO (Graph String)
+getInput :: IO Orbits
 getInput = do
     content <- readFile "input/day6.txt"
-    let pairs = fmap ((\[x,y] -> (x,y)) . (splitOn ")")) (lines content)
-    return $ foldl addEdge M.empty pairs
+    let pairs = fmap ((splitOn ")") . lines) content
+    let nodes = zip (S.toList $ S.fromList $ (lines content) >>= (splitOn ")")) [0..]
+    let nodeMap = M.fromList nodes
+    let edges = (fmap (splitOn ")") (lines content)) >>= (\[x,y] -> [(fromJust $ M.lookup x nodeMap, fromJust $ M.lookup y nodeMap, 1), (fromJust $ M.lookup y nodeMap, fromJust $ M.lookup x nodeMap, 1)])
 
-paths :: (Ord n, Eq n) => n -> n -> [n] -> Graph n -> [[n]]
-paths from to path _ | from == to = [reverse path]
-paths from to path graph = adjacentTo from graph
-                         & filter (not . (flip elem) path)
-                         >>= (\n -> paths n to (n:path) graph)
+    return $ (G.mkGraph (fmap swap nodes) edges, nodeMap)
 
-adjacentTo :: (Ord n) => n -> Graph n -> [n]
-adjacentTo n graph = fromMaybe [] (M.lookup n graph)
+day06a :: Orbits -> Int
+day06a (graph, labels) = fromJust $ do
+    com <- M.lookup "COM" labels
+    let shortestPaths = spTree com graph
+    return $ sum $ fmap (snd . head . G.unLPath) shortestPaths
 
-addEdge :: (Ord n) => Graph n -> Edge n -> Graph n
-addEdge graph p = addEdge' (addEdge' graph p) (swap p)
+day06b :: Orbits -> Int
+day06b (graph, labels) = (fromJust shortestPath) - 2
     where
-        addEdge' graph (from,to) = M.insertWith (++) from [to] graph
-
-shortestPath :: (Ord n) => n -> n -> Graph n -> Int
-shortestPath from to graph = (minimum (fmap length (paths from to [] graph)))
-
-day06a :: Graph String -> Int
-day06a = numOrbits
-
-day06b :: Graph String -> Int
-day06b orbits = (shortestPath "YOU" "SAN" orbits) - 2
+        shortestPath = do
+            you <- M.lookup "YOU" labels
+            san <- M.lookup "SAN" labels
+            length <- spLength you san graph
+            return length
 
 solutions :: IO (Int, Int)
 solutions = do
