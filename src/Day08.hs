@@ -1,4 +1,4 @@
-module Day08 where
+module Day08 (solutions) where
 
 import Data.List.Split
 import Data.Char

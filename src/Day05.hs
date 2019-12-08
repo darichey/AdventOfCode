@@ -1,4 +1,4 @@
-module Day05 where
+module Day05 (solutions) where
 
 import Data.List.Split
 import Data.List

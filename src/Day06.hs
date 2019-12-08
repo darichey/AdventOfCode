@@ -1,4 +1,4 @@
-module Day06 where
+module Day06 (solutions) where
 
 import Data.Tree
 import Data.Maybe
