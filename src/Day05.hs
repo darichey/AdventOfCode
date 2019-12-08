@@ -5,18 +5,18 @@ import Data.List
 import Data.Tuple
 import qualified Data.Vector as V
 
-data IntCode = IntCode (V.Vector Int) deriving Show
+newtype IntCode = IntCode (V.Vector Int) deriving Show
 data Program = Program Int [Int] [Int] IntCode deriving Show
 
 getInput :: IO Program
-getInput = (Program 0 [] []) . IntCode . V.fromList . (fmap read) . (splitOn ",") <$> readFile "input/day5.txt"
+getInput = Program 0 [] [] . IntCode . V.fromList . fmap read . splitOn "," <$> readFile "input/day5.txt"
 
 valueOf :: IntCode -> Param -> Int
-valueOf code (Pos x) = code ! x
+valueOf code (Pos x) = valueAt code x
 valueOf _    (Imm x) = x
 
-(!) :: IntCode -> Int -> Int
-(IntCode code) ! x = code V.! x
+valueAt :: IntCode -> Int -> Int
+valueAt (IntCode code) x = code V.! x
 
 values :: IntCode -> [Param] -> [Int]
 values = fmap . valueOf
@@ -58,14 +58,14 @@ nextIns (Program ptr _ _ code) =
         8 -> Equals (param 1 c) (param 2 b) (param 3 a)
         99 -> Terminate
     where
-        [e,d,c,b,a] = digits 5 (code ! ptr)
+        [e,d,c,b,a] = digits 5 (valueAt code ptr)
         op = d * 10 + e
 
         param :: Int -> Int -> Param
         param offset mode = case mode of
             0 -> Pos 
             1 -> Imm
-            $ (code ! (ptr + offset))
+            $ valueAt code (ptr + offset)
 
         digits :: Int -> Int -> [Int]
         digits n num = take n (unfoldr (\b -> Just $ swap (divMod b 10)) num)
@@ -83,7 +83,7 @@ run :: Program -> [Int]
 run = output . until terminated apply
 
 apply :: Program -> Program
-apply ps@(Program ptr input output code) = case (nextIns ps) of
+apply ps@(Program ptr input output code) = case nextIns ps of
     (Add p1 p2 p3) -> Program (ptr + 4) input output code'
         where
             code' = update p3 (combine (+) code p1 p2) code
