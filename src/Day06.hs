@@ -25,14 +25,14 @@ day06b tree = lcaToYou + lcaToSan - 2
         toYou = fromJust $ pathTo "YOU" tree
         toSan = fromJust $ pathTo "SAN" tree
         common = length $ takeWhile (uncurry (==)) (zip toYou toSan)
-        lcaToYou = (length toYou) - common
-        lcaToSan = (length toSan) - common
+        lcaToYou = length toYou - common
+        lcaToSan = length toSan - common
 
 pathTo :: (Eq a) => a -> Tree a -> Maybe [a]
 pathTo n Node{rootLabel=root, subForest=children}
     | root == n     = Just [n]
     | null children = Nothing
-    | otherwise     = (root:) <$> (msum $ fmap (pathTo n) children)
+    | otherwise     = (root:) <$> msum (fmap (pathTo n) children)
 
 solutions :: IO (Int, Int)
 solutions = do

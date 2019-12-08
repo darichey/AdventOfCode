@@ -8,7 +8,7 @@ type Program = Vector Int
 
 -- |Reads the input IntCode program as a Program
 getInput :: IO Program
-getInput = (fromList . (fmap read) . (splitOn ",")) <$> readFile "input/day2.txt"
+getInput = fromList . fmap read . splitOn "," <$> readFile "input/day2.txt"
 
 -- |Runs an IntCode program given a noun and a verb. The result is the value
 -- at position 0 after the program completes.
@@ -44,7 +44,7 @@ day02b :: Program -> Int
 day02b prog = noun * 100 + verb
     where
         base  = solve 0 0 prog
-        delta = (solve 1 0 prog) - base
+        delta = solve 1 0 prog - base
         (noun, verb) = divMod (19690720 - base) delta
 
 -- Bruteforce Solution for part two

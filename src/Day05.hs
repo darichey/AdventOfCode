@@ -9,7 +9,7 @@ data IntCode = IntCode (V.Vector Int) deriving Show
 data Program = Program Int [Int] [Int] IntCode deriving Show
 
 getInput :: IO Program
-getInput = ((Program 0 [] []) . IntCode . V.fromList . (fmap read) . (splitOn ",")) <$> readFile "input/day5.txt"
+getInput = (Program 0 [] []) . IntCode . V.fromList . (fmap read) . (splitOn ",") <$> readFile "input/day5.txt"
 
 valueOf :: IntCode -> Param -> Int
 valueOf code (Pos x) = code ! x

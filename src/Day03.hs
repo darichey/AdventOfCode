@@ -11,7 +11,7 @@ type Path = [Direction]
 type Point = (Int, Int)
 
 getInput :: IO (Path, Path)
-getInput = (firstTwo . fmap parsePath . lines) <$> readFile "input/day3.txt"
+getInput = firstTwo . fmap parsePath . lines <$> readFile "input/day3.txt"
     where
         firstTwo (x:y:_) = (x,y)
         parsePath = (parseDirection =<<) . splitOn ","
@@ -28,7 +28,7 @@ points path = M.fromListWith min (tail $ zip (scanl go (0,0) path) [0..])
             'D' -> (x, y - 1)
 
 distanceZero :: Point -> Int
-distanceZero (x1, y1) = (abs x1) + (abs y1)
+distanceZero (x1, y1) = abs x1 + abs y1
 
 intersections :: Path -> Path -> M.Map Point Int
 intersections path1 path2 = M.intersectionWith (+) (points path1) (points path2)

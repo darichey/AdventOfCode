@@ -3,7 +3,7 @@ module Day01 (solutions) where
 
 -- |Reads the list of modules masses as a [Int]
 getInput :: IO [Int]
-getInput = (fmap read . lines) <$> readFile "input/day1.txt"
+getInput = fmap read . lines <$> readFile "input/day1.txt"
 
 -- |Claculates the simple amount of fuel required for a module
 fuel :: Int -> Int
@@ -13,7 +13,7 @@ fuel mass = max ((mass `div` 3) - 2) 0
 -- account the fact that fuel itself requires more fuel
 allFuel :: Int -> Int
 allFuel 0 = 0
-allFuel x = (y + allFuel y)
+allFuel x = y + allFuel y
     where y = fuel x
 
 day01a :: [Int] -> Int

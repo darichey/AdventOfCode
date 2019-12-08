@@ -4,7 +4,7 @@ import Data.List
 import Data.List.Split
 
 getInput :: IO (Int, Int)
-getInput = (firstTwo . (fmap read) . splitOn "-") <$> readFile "input/day4.txt"
+getInput = firstTwo . fmap read . splitOn "-" <$> readFile "input/day4.txt"
     where firstTwo [x,y] = (x,y)
 
 pairs :: [a] -> [(a, a)]
@@ -20,7 +20,7 @@ increasing :: String -> Bool
 increasing = all (uncurry (<=)) . pairs
 
 both :: (a -> Bool) -> (a -> Bool) -> a -> Bool
-both f g x = (f x) && (g x)
+both f g x = f x && g x
 
 day04a :: [String] -> Int
 day04a = length . filter (both increasing twoAdjacent)
@@ -31,5 +31,5 @@ day04b = length . filter (both increasing exactlyPair)
 solutions :: IO (Int, Int)
 solutions = do
     (a,b) <- getInput
-    let nums = (fmap show) [a..b]
+    let nums = fmap show [a..b]
     return (day04a nums, day04b nums)

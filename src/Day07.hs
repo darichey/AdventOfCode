@@ -9,7 +9,7 @@ data IntCode = IntCode (V.Vector Int) deriving Show
 data Program = Program Int [Int] [Int] IntCode deriving Show
 
 getInput :: IO Program
-getInput = ((Program 0 [] []) . IntCode . V.fromList . (fmap read) . (splitOn ",")) <$> readFile "input/day7.txt"
+getInput = (Program 0 [] []) . IntCode . V.fromList . (fmap read) . (splitOn ",") <$> readFile "input/day7.txt"
 
 valueOf :: IntCode -> Param -> Int
 valueOf code (Pos x) = code ! x
@@ -31,7 +31,7 @@ combine f code x      (Imm y)  = f (valueOf code x) y
 combine f code x       y       = f (valueOf code x) (valueOf code y)
 
 data Param = Pos Int
-           | Imm Int 
+           | Imm Int
            deriving Show
 
 data Ins = Add Param Param Param
@@ -51,8 +51,8 @@ state :: Program -> EndState
 state (Program ptr _ _ _) | ptr == -1 = Terminated
 state prog@(Program _ input _ code) =
     case (nextIns prog, input) of
-        ((In _), []) -> Suspended
-        _            -> NotStarted
+        (In _, []) -> Suspended
+        _          -> NotStarted
 
 nextIns :: Program -> Ins
 nextIns (Program ptr _ _ code) =
@@ -72,7 +72,7 @@ nextIns (Program ptr _ _ code) =
 
         param :: Int -> Int -> Param
         param offset mode = case mode of
-            0 -> Pos 
+            0 -> Pos
             1 -> Imm
             $ (code ! (ptr + offset))
 
@@ -88,11 +88,11 @@ output (Program _ _ output _) = output
 run :: Program -> ([Int], Program)
 run prog = (out, prog')
     where
-        prog' = (until (\p -> let s = state p in s == Terminated || s == Suspended) apply) prog
+        prog' = until (\p -> let s = state p in s == Terminated || s == Suspended) apply prog
         out = output prog'
 
 apply :: Program -> Program
-apply ps@(Program ptr input output code) = case (nextIns ps) of
+apply ps@(Program ptr input output code) = case nextIns ps of
     (Add p1 p2 p3) -> Program (ptr + 4) input output code'
         where
             code' = update p3 (combine (+) code p1 p2) code
@@ -138,8 +138,8 @@ day07a prog = maximum outputs
         inputs = permutations [0,1,2,3,4]
         outputs = fmap (\[a,b,c,d,e] -> f prog a b c d e) inputs
 
-f prog a b c d e = 
-    let 
+f prog a b c d e =
+    let
         outA = head $ fst $ run (withInput [a,0] prog)
         outB = head $ fst $ run (withInput [b,outA] prog)
         outC = head $ fst $ run (withInput [c,outB] prog)
@@ -154,7 +154,7 @@ day07b prog = maximum outputs
         outputs :: [Int]
         outputs = fmap (\[a,b,c,d,e] -> h prog prog prog prog prog a b c d e) inputs
 
-h progA progB progC progD progE a b c d e = 
+h progA progB progC progD progE a b c d e =
     let
         (outA, progA') = run (withInput [a,0] progA)
         (outB, progB') = run (withInput [b,head outA] progB)
@@ -164,7 +164,7 @@ h progA progB progC progD progE a b c d e =
     in
         g progA' progB' progC' progD' progE' (head outE)
 
-g progA progB progC progD progE inA  = 
+g progA progB progC progD progE inA  =
     let
         (outA, progA') = run (withInput [inA] progA)
         (outB, progB') = run (withInput [head outA] progB)
