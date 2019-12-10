@@ -12,6 +12,7 @@ import Day06
 import Day07
 import Day08
 import Day09
+import Day10
 
 class Solution a where
     showSol :: a -> String
@@ -32,7 +33,8 @@ main = do
     -- printSolutions "Day 6" Day06.solutions
     -- printSolutions "Day 7" Day07.solutions
     -- printSolutions "Day 8" Day08.solutions
-    printSolutions "Day 9" Day09.solutions
+    -- printSolutions "Day 9" Day09.solutions
+    printSolutions "Day 10" Day10.solutions
 
 printSolutions :: (Solution a, Solution b) => String -> IO (a, b) -> IO ()
 printSolutions day solsM = do
