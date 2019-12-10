@@ -3,19 +3,16 @@ module Day09 where
 import Data.List.Split
 import Data.List
 import Data.Tuple
-import qualified Data.Vector as V
-import Debug.Trace
+import qualified Data.IntMap.Strict as M
 
-newtype IntCode = IntCode (V.Vector Int) deriving Show
+newtype IntCode = IntCode (M.IntMap Int) deriving Show
 data Program = Program Int [Int] [Int] Int IntCode deriving Show
 
 getInput :: IO Program
--- getInput = Program 0 [] [] 0 . IntCode . (\xs -> xs ++ (V.replicate 1000000 0)) . V.fromList . (fmap read :: [Int]) . splitOn "," <$> readFile "input/day9.txt"
 getInput = do
     input <- readFile "input/day9.txt"
-    let ins = V.fromList (fmap read (splitOn "," input))
-    let extended = ins V.++ V.replicate 100000 (0 :: Int)
-    return $ Program 0 [] [] 0 (IntCode extended)
+    let ins = M.fromAscList $ zip [0..] (fmap read (splitOn "," input))
+    return $ Program 0 [] [] 0 (IntCode ins)
 
 
 valueOf :: Program -> Param -> Int
@@ -24,14 +21,18 @@ valueOf _                            (Imm x) = x
 valueOf (Program _ _ _ relBase code) (Rel x) = valueAt code (relBase + x)
 
 valueAt :: IntCode -> Int -> Int
-valueAt (IntCode code) x = code V.! x
+valueAt (IntCode code) x = code M.! x
 
 values :: Program -> [Param] -> [Int]
 values = fmap . valueOf
 
+update' :: Int -> Int -> IntCode -> IntCode
+update' at value (IntCode code) = IntCode code'
+    where code' = M.insert at value code
+
 update :: Param -> Int -> Program -> IntCode
-update (Pos z) xy (Program _ _ _ _ (IntCode code)) = IntCode $ code V.// [(z, xy)]
-update (Rel z) xy (Program _ _ _ relBase (IntCode code)) = IntCode $ code V.// [(relBase + z, xy)]
+update (Pos z) xy (Program _ _ _ _ code) = update' z xy code
+update (Rel z) xy (Program _ _ _ relBase code) = update' (relBase + z) xy code
 
 combine :: (Int -> Int -> Int) -> Program -> Param -> Param -> Int
 combine f _    (Imm x) (Imm y) = f x y
@@ -98,11 +99,11 @@ withInput input (Program ptr _ output relBase code) = Program ptr input output r
 output :: Program -> [Int]
 output (Program _ _ output _ _) = output
 
-run :: Program -> ([Int], Program)
-run prog = (out, prog')
-    where
-        prog' = until (\p -> let s = state p in s == Terminated || s == Suspended) apply prog
-        out = output prog'
+shouldStop :: Program -> Bool
+shouldStop p = let s = state p in s == Terminated || s == Suspended
+
+run :: Program -> Program
+run = until shouldStop apply
 
 apply :: Program -> Program
 apply ps@(Program ptr input output relBase code) = case nextIns ps of
@@ -150,12 +151,12 @@ apply ps@(Program ptr input output relBase code) = case nextIns ps of
     Terminate -> Program (-1) input output relBase code
 
 day09a :: Program -> Int
-day09a prog = head $ fst $ run $ withInput [1] prog
+day09a = head . output . run . withInput[1]
 
 day09b :: Program -> Int
-day09b prog = head $ fst $ run $ withInput [2] prog
+day09b = head . output . run . withInput[2]
 
 solutions :: IO (Int, Int)
 solutions = do
     input <- getInput
-    return $ (day09a input, day09b input)
+    return (day09a input, day09b input)
