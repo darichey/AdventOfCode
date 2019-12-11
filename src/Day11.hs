@@ -1,16 +1,18 @@
-module Day09 (solutions) where
+module Day11 where
 
 import Data.List.Split
 import Data.List
 import Data.Tuple
 import qualified Data.IntMap.Strict as M
+import qualified Data.Map as Map
+import Debug.Trace
 
 newtype IntCode = IntCode (M.IntMap Int) deriving Show
 data Program = Program Int [Int] [Int] Int IntCode deriving Show
 
 getInput :: IO Program
 getInput = do
-    input <- readFile "input/day9.txt"
+    input <- readFile "input/day11.txt"
     let ins = M.fromAscList $ zip [0..] (fmap read (splitOn "," input))
     return $ Program 0 [] [] 0 (IntCode ins)
 
@@ -21,7 +23,8 @@ valueOf _                            (Imm x) = x
 valueOf (Program _ _ _ relBase code) (Rel x) = valueAt code (relBase + x)
 
 valueAt :: IntCode -> Int -> Int
-valueAt (IntCode code) x = code M.! x
+-- valueAt (IntCode code) x = code M.! x
+valueAt (IntCode code) x = M.findWithDefault 0 x code
 
 values :: Program -> [Param] -> [Int]
 values = fmap . valueOf
@@ -106,7 +109,7 @@ run :: Program -> Program
 run = until shouldStop apply
 
 apply :: Program -> Program
-apply ps@(Program ptr input output relBase code) = case nextIns ps of
+apply ps@(Program ptr input output relBase code) = case traceShowId $ nextIns ps of
     (Add p1 p2 p3) -> Program (ptr + 4) input output relBase code'
         where
             code' = update p3 (combine (+) ps p1 p2) ps
@@ -150,13 +153,74 @@ apply ps@(Program ptr input output relBase code) = case nextIns ps of
 
     Terminate -> Program (-1) input output relBase code
 
-day09a :: Program -> Int
-day09a = head . output . run . withInput[1]
 
-day09b :: Program -> Int
-day09b = head . output . run . withInput[2]
+type Point = (Int, Int)
+type Board = Map.Map Point Color
+data Dir = L | R | U | D deriving (Show, Eq)
+data Position = Position Dir Point deriving (Show, Eq)
+data Color = B | W deriving (Show, Eq)
 
-solutions :: IO (Int, Int)
-solutions = do
-    input <- getInput
-    return (day09a input, day09b input)
+colorToChar :: Color -> Char
+colorToChar B = '.'
+colorToChar W = '#'
+
+colorToInt :: Color -> Int
+colorToInt B = 0
+colorToInt W = 1
+
+intToColor :: Int -> Color
+intToColor 0 = B
+intToColor 1 = W
+
+turn :: Int -> Dir -> Dir
+turn 0 = turnL
+turn 1 = turnR
+
+turnL :: Dir -> Dir
+turnL L = D
+turnL R = U
+turnL U = L
+turnL D = R
+
+turnR :: Dir -> Dir
+turnR L = U
+turnR R = D
+turnR U = R
+turnR D = L
+
+stepForward :: Position -> Position
+stepForward (Position facing (x,y)) = case facing of
+    L -> Position facing (x-1, y)
+    R -> Position facing (x+1, y)
+    U -> Position facing (x, y+1)
+    D -> Position facing (x, y-1)
+
+colorAt :: Position -> Board -> Color
+colorAt (Position _ p) = Map.findWithDefault B p
+
+runWithCurrentColor :: Position -> Board -> Program -> (Position, Board, Program)
+runWithCurrentColor pos@(Position facing p) board prog = (pos', board', prog')
+    where
+        c = colorAt pos board
+        prog' = run (withInput [colorToInt c] prog)
+        (toPaint:toTurn:_) = output prog'
+        board' = Map.insert p (intToColor toPaint) board
+        pos' = stepForward (Position (turn toTurn facing) p)
+
+runRobot :: Position -> Board -> Program -> (Position, Board, Program)
+runRobot pos board prog =
+    if state prog == Terminated then
+        (pos, board, prog)
+    else
+        runRobot pos' board' prog'
+            where
+                (pos', board', prog') = runWithCurrentColor pos board prog
+
+showBoard :: Board -> String
+showBoard board = unlines $ chunksOf 50 (fmap (\p -> colorToChar $ Map.findWithDefault B p board) [(x,y) | x <- [-25..24], y <- [-25..24]])
+
+day11a :: Program -> Int
+day11a prog = Map.size painted
+    where
+        painted = undefined
+
