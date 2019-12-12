@@ -36,6 +36,7 @@ main = do
     printSolutions "Day 8" Day08.solutions
     printSolutions "Day 9" Day09.solutions
     printSolutions "Day 10" Day10.solutions
+    printSolutions "Day 11" Day11.solutions
 
 printSolutions :: (Solution a, Solution b) => String -> IO (a, b) -> IO ()
 printSolutions day solsM = do

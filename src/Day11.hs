@@ -1,4 +1,4 @@
-module Day11 where
+module Day11 (solutions) where
 
 import Data.List.Split
 import Data.List
@@ -99,6 +99,9 @@ nextIns (Program ptr _ _ _ code) =
 withInput :: [Int] -> Program -> Program
 withInput input (Program ptr _ output relBase code) = Program ptr input output relBase code
 
+clearOutput :: Program -> Program
+clearOutput (Program ptr input output relBase code) = Program ptr input [] relBase code
+
 output :: Program -> [Int]
 output (Program _ _ output _ _) = output
 
@@ -109,7 +112,7 @@ run :: Program -> Program
 run = until shouldStop apply
 
 apply :: Program -> Program
-apply ps@(Program ptr input output relBase code) = case traceShowId $ nextIns ps of
+apply ps@(Program ptr input output relBase code) = case nextIns ps of
     (Add p1 p2 p3) -> Program (ptr + 4) input output relBase code'
         where
             code' = update p3 (combine (+) ps p1 p2) ps
@@ -153,7 +156,6 @@ apply ps@(Program ptr input output relBase code) = case traceShowId $ nextIns ps
 
     Terminate -> Program (-1) input output relBase code
 
-
 type Point = (Int, Int)
 type Board = Map.Map Point Color
 data Dir = L | R | U | D deriving (Show, Eq)
@@ -192,18 +194,18 @@ stepForward :: Position -> Position
 stepForward (Position facing (x,y)) = case facing of
     L -> Position facing (x-1, y)
     R -> Position facing (x+1, y)
-    U -> Position facing (x, y+1)
-    D -> Position facing (x, y-1)
+    U -> Position facing (x, y-1)
+    D -> Position facing (x, y+1)
 
-colorAt :: Position -> Board -> Color
-colorAt (Position _ p) = Map.findWithDefault B p
+colorAt :: Point -> Board -> Color
+colorAt = Map.findWithDefault B
 
 runWithCurrentColor :: Position -> Board -> Program -> (Position, Board, Program)
 runWithCurrentColor pos@(Position facing p) board prog = (pos', board', prog')
     where
-        c = colorAt pos board
+        c = colorAt p board
         prog' = run (withInput [colorToInt c] prog)
-        (toPaint:toTurn:_) = output prog'
+        (toTurn:toPaint:_) = output prog'
         board' = Map.insert p (intToColor toPaint) board
         pos' = stepForward (Position (turn toTurn facing) p)
 
@@ -214,13 +216,26 @@ runRobot pos board prog =
     else
         runRobot pos' board' prog'
             where
-                (pos', board', prog') = runWithCurrentColor pos board prog
+                (pos', board', prog') = runWithCurrentColor pos board (clearOutput prog)
 
 showBoard :: Board -> String
-showBoard board = unlines $ chunksOf 50 (fmap (\p -> colorToChar $ Map.findWithDefault B p board) [(x,y) | x <- [-25..24], y <- [-25..24]])
+showBoard board = unlines $ transpose $ chunksOf 100 (fmap (\p -> colorToChar $ colorAt p board) [(x,y) | x <- [-50..49], y <- [-50..49]])
 
 day11a :: Program -> Int
-day11a prog = Map.size painted
+day11a prog = Map.size board'
     where
-        painted = undefined
+        pos = Position U (0,0)
+        board = Map.empty
+        (pos', board', prog') = runRobot pos board prog
 
+day11b :: Program -> String
+day11b prog = showBoard board'
+    where
+        pos = Position U (0,0)
+        board = Map.singleton (0,0) W
+        (pos', board', prog') = runRobot pos board prog
+
+solutions :: IO (Int, Int)
+solutions = do
+    input <- getInput
+    return (day11a input, 0)
