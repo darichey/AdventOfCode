@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: d18df921a73aefdc460ed8cfbd1b4c9b786cb80cb72efcb1738768855a34454e
+-- hash: 0af6f678d981fd64b1f6323a6e3626ebc4f8a847f18390ab5c3eec58fb388832
 
 name:           AdventOfCode2019
 version:        0.1
@@ -43,6 +43,7 @@ executable AdventOfCode2019
     , lens
     , linear
     , parsec
+    , parsec-numbers
     , split
     , vector
   default-language: Haskell2010
