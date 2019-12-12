@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9101e75632458d8cbb84a6b83679d5881f10a8bab5bf945e6755e2030c46f036
+-- hash: d18df921a73aefdc460ed8cfbd1b4c9b786cb80cb72efcb1738768855a34454e
 
 name:           AdventOfCode2019
 version:        0.1
@@ -32,6 +32,7 @@ executable AdventOfCode2019
       Day09
       Day10
       Day11
+      Day12
       Paths_AdventOfCode2019
   hs-source-dirs:
       src
@@ -39,7 +40,9 @@ executable AdventOfCode2019
       base >=4.7 && <5
     , containers
     , fgl
+    , lens
     , linear
-    , split >=0.2.3.3
-    , vector >=0.12.0.3
+    , parsec
+    , split
+    , vector
   default-language: Haskell2010
