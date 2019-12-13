@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 0af6f678d981fd64b1f6323a6e3626ebc4f8a847f18390ab5c3eec58fb388832
+-- hash: 0d23c539e3baf3d89d0a263c5da431aa68ed635d21479f347257d3f9197423d5
 
 name:           AdventOfCode2019
 version:        0.1
@@ -33,6 +33,8 @@ executable AdventOfCode2019
       Day10
       Day11
       Day12
+      Day13
+      IntCode
       Paths_AdventOfCode2019
   hs-source-dirs:
       src
@@ -45,5 +47,6 @@ executable AdventOfCode2019
     , parsec
     , parsec-numbers
     , split
+    , text
     , vector
   default-language: Haskell2010

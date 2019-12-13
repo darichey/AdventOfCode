@@ -13,6 +13,7 @@ dependencies:
 - parsec
 - parsec-numbers
 - lens
+- text
 
 executable:
   main: Main.hs

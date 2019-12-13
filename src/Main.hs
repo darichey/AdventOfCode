@@ -15,6 +15,7 @@ import Day09
 import Day10
 import Day11
 import Day12
+import Day13
 
 class Solution a where
     showSol :: a -> String
