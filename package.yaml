@@ -1,6 +1,6 @@
-name: AdventOfCode2019
+name: AdventOfCode
 version: 0.1
-github: "darichey/AdventOfCode2019"
+github: "darichey/AdventOfCode"
 license: MIT
 
 dependencies:
@@ -14,7 +14,10 @@ dependencies:
 - parsec-numbers
 - lens
 - text
+- cmdargs
+- ordered-containers
 
-executable:
-  main: Main.hs
-  source-dirs: src
+executables:
+  AdventOfCode-exe:
+    main: Main.hs
+    source-dirs: AdventOfCode

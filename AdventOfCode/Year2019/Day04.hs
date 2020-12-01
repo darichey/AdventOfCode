@@ -1,11 +1,12 @@
-module Day04 (solutions) where
+module Year2019.Day04 (solutions) where
 
-import Data.List
-import Data.List.Split
+import Data.List (group)
+import Data.List.Split (splitOn)
 
 getInput :: IO (Int, Int)
-getInput = firstTwo . fmap read . splitOn "-" <$> readFile "input/day4.txt"
-    where firstTwo [x,y] = (x,y)
+getInput = firstTwo . fmap read . splitOn "-" <$> readFile "input/Year2019/day4.txt"
+  where
+    firstTwo [x, y] = (x, y)
 
 pairs :: [a] -> [(a, a)]
 pairs x = zip x (tail x)
@@ -30,6 +31,6 @@ day04b = length . filter (both increasing exactlyPair)
 
 solutions :: IO (Int, Int)
 solutions = do
-    (a,b) <- getInput
-    let nums = fmap show [a..b]
-    return (day04a nums, day04b nums)
+  (a, b) <- getInput
+  let nums = fmap show [a .. b]
+  return (day04a nums, day04b nums)

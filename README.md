@@ -1,1 +1,2 @@
-# AdventOfCode2019
+# AdventOfCode
+My solutions for Advent Of Code
