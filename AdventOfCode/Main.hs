@@ -19,6 +19,7 @@ import qualified Year2019.Day11
 import qualified Year2019.Day12
 import qualified Year2019.Day13
 import qualified Year2019.Day14
+import qualified Year2020.Day01
 
 solutionsMap :: OMap.OMap [Char] (OMap.OMap [Char] (IO ()))
 solutionsMap =
@@ -39,6 +40,11 @@ solutionsMap =
             ("12", printSolutions "Day 12" Year2019.Day12.solutions),
             ("13", printSolutions "Day 13" Year2019.Day13.solutions),
             ("14", printSolutions "Day 14" Year2019.Day14.solutions)
+          ]
+      ),
+      ( "2020",
+        OMap.fromList
+          [ ("1", printSolutions "Day 1" Year2020.Day01.solutions)
           ]
       )
     ]
