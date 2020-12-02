@@ -1,7 +1,9 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Util (printSolutions) where
+module Util (printSolutions, count, occurrences, xor) where
+
+import Control.Arrow ((>>>))
 
 class Solution a where
   showSol :: a -> String
@@ -18,3 +20,12 @@ printSolutions day solsM = do
   putStrLn $ " == " ++ day ++ " == "
   putStrLn $ showSol part1
   putStrLn $ showSol part2
+
+count :: (a -> Bool) -> [a] -> Int
+count p = filter p >>> length
+
+occurrences :: Eq a => a -> [a] -> Int
+occurrences x = count (x ==)
+
+xor :: Bool -> Bool -> Bool
+xor = (/=)
