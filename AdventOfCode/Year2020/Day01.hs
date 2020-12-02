@@ -1,13 +1,31 @@
 module Year2020.Day01 (solutions) where
 
+import qualified Data.IntSet as IntSet
+
 getInput :: IO [Int]
 getInput = fmap read . lines <$> readFile "input/Year2020/day1.txt"
 
 day01a :: [Int] -> Int
-day01a ints = head [x * y | x <- ints, y <- ints, x + y == 2020]
+-- O(n^2)
+-- day01a ints = head [x * y | x <- ints, y <- ints, x + y == 2020]
+
+-- O(n)
+day01a ints = go ints IntSet.empty
+  where
+    go (x : xs) set =
+      if IntSet.member (2020 - x) set
+        then x * (2020 - x)
+        else go xs (IntSet.insert x set)
 
 day01b :: [Int] -> Int
-day01b ints = head [x * y * z | x <- ints, y <- ints, z <- ints, x + y + z == 2020]
+-- O(n^3)
+-- day01b ints = head [x * y * z | x <- ints, y <- ints, z <- ints, x + y + z == 2020]
+
+--O(n^2)
+day01b ints = head [x * y * target x y | x <- ints, y <- ints, IntSet.member (target x y) set]
+  where
+    set = IntSet.fromList ints
+    target x y = 2020 - (x + y)
 
 solutions :: IO (Int, Int)
 solutions = do
