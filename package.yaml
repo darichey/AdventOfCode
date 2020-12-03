@@ -16,6 +16,7 @@ dependencies:
 - text
 - cmdargs
 - ordered-containers
+- either
 
 executables:
   AdventOfCode-exe:
