@@ -6,6 +6,7 @@ import Data.List.Split (chunksOf, splitOn)
 import qualified Data.Map as Map
 import Data.Tuple (swap)
 import Solution (Solution (Solution))
+import Util (NoQuotes(NoQuotes))
 
 newtype IntCode = IntCode (M.IntMap Int) deriving (Show)
 
@@ -232,5 +233,5 @@ part2 prog = showBoard board'
     board = Map.singleton (0, 0) W
     (_, board', _) = runRobot pos board prog
 
-solution :: Solution Program Int String
-solution = Solution "Day 11" "input/Year2019/day11.txt" parse part1 part2
+solution :: Solution Program Int NoQuotes
+solution = Solution "Day 11" "input/Year2019/day11.txt" parse part1 (NoQuotes . part2)

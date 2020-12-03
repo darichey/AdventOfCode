@@ -1,6 +1,6 @@
 {-# LANGUAGE RecordWildCards #-}
 
-module Solution (Solution (..), printSolution, Year (..), todo, printDay) where
+module Solution (Solution (..), printSolution, Year (..), todo) where
 
 data Solution i a b = Solution
   { name :: String,
@@ -21,9 +21,7 @@ printSolution Solution {..} = do
       putStrLn $ "==" ++ name ++ "=="
       print $ part1 i
       print $ part2 i
+      putStrLn ""
 
 todo :: String -> Solution () String String
 todo name = Solution name "/dev/null" (Just . const ()) (const "TODO") (const "TODO")
-
-printDay :: Int -> Year -> IO ()
-printDay day Year{..} = days !! (day - 1)

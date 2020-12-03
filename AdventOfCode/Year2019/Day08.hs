@@ -4,7 +4,7 @@ import Data.List (minimumBy)
 import Data.List.Split (chunksOf)
 import Data.Ord (comparing)
 import Solution (Solution (Solution))
-import Util (occurrences)
+import Util (NoQuotes(NoQuotes), occurrences)
 
 type Pixel = Char
 
@@ -32,5 +32,5 @@ pixelToChar :: Pixel -> Char
 pixelToChar '1' = '#'
 pixelToChar _ = ' '
 
-solution :: Solution Image Int String
-solution = Solution "Day 8" "input/Year2019/day8.txt" parse part1 part2
+solution :: Solution Image Int NoQuotes
+solution = Solution "Day 8" "input/Year2019/day8.txt" parse part1 (NoQuotes . part2)
