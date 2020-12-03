@@ -1,16 +1,17 @@
-module Year2019.Day07 (solutions) where
+module Year2019.Day07 (solution) where
 
 import Data.List (permutations, unfoldr)
 import Data.List.Split (splitOn)
 import Data.Tuple (swap)
 import qualified Data.Vector as V
+import Solution (Solution (Solution))
 
 newtype IntCode = IntCode (V.Vector Int) deriving (Show)
 
 data Program = Program Int [Int] [Int] IntCode deriving (Show)
 
-getInput :: IO Program
-getInput = Program 0 [] [] . IntCode . V.fromList . fmap read . splitOn "," <$> readFile "input/Year2019/day7.txt"
+parse :: String -> Maybe Program
+parse = Just . Program 0 [] [] . IntCode . V.fromList . fmap read . splitOn ","
 
 valueOf :: IntCode -> Param -> Int
 valueOf code (Pos x) = valueAt code x
@@ -128,8 +129,8 @@ apply ps@(Program ptr input output code) = case nextIns ps of
       code' = update p3 (if x == y then 1 else 0) code
   Terminate -> Program (-1) input output code
 
-day07a :: Program -> Int
-day07a prog = maximum outputs
+part1 :: Program -> Int
+part1 prog = maximum outputs
   where
     inputs = permutations [0, 1, 2, 3, 4]
     outputs = fmap (\[a, b, c, d, e] -> f prog a b c d e) inputs
@@ -142,8 +143,8 @@ f prog a b c d e =
       outE = head $ fst $ run (withInput [e, outD] prog)
    in outE
 
-day07b :: Program -> Int
-day07b prog = maximum outputs
+part2 :: Program -> Int
+part2 prog = maximum outputs
   where
     inputs = permutations [5, 6, 7, 8, 9]
     outputs :: [Int]
@@ -167,7 +168,5 @@ g progA progB progC progD progE inA =
         then head outE
         else g progA' progB' progC' progD' progE' (head outE)
 
-solutions :: IO (Int, Int)
-solutions = do
-  input <- getInput
-  return (day07a input, day07b input)
+solution :: Solution Program Int Int
+solution = Solution "Day 7" "input/Year2019/day7.txt" parse part1 part2

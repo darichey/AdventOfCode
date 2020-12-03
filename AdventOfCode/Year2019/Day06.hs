@@ -1,26 +1,25 @@
-module Year2019.Day06 (solutions) where
+module Year2019.Day06 (solution) where
 
 import Control.Monad (msum)
 import Data.List.Split (splitOn)
 import qualified Data.Map as M
 import Data.Maybe (fromJust, fromMaybe)
 import Data.Tree (Tree (..), levels, unfoldTree)
+import Solution (Solution (Solution))
 
 type Orbits = Tree String
 
-getInput :: IO Orbits
-getInput = do
-  content <- readFile "input/Year2019/day6.txt"
+parse :: String -> Maybe Orbits
+parse content =
   let edges = fmap ((\[x, y] -> (x, y)) . splitOn ")") (lines content)
-  let adjList = M.fromListWith (++) (fmap (\(a, b) -> (a, [b])) edges)
+      adjList = M.fromListWith (++) (fmap (\(a, b) -> (a, [b])) edges)
+   in Just $ unfoldTree (\n -> (n, fromMaybe [] (M.lookup n adjList))) "COM"
 
-  return $ unfoldTree (\n -> (n, fromMaybe [] (M.lookup n adjList))) "COM"
+part1 :: Orbits -> Int
+part1 = sum . fmap (uncurry (*)) . zip [0 ..] . fmap length . levels
 
-day06a :: Orbits -> Int
-day06a = sum . fmap (uncurry (*)) . zip [0 ..] . fmap length . levels
-
-day06b :: Orbits -> Int
-day06b tree = lcaToYou + lcaToSan - 2
+part2 :: Orbits -> Int
+part2 tree = lcaToYou + lcaToSan - 2
   where
     toYou = fromJust $ pathTo "YOU" tree
     toSan = fromJust $ pathTo "SAN" tree
@@ -34,7 +33,5 @@ pathTo n Node {rootLabel = root, subForest = children}
   | null children = Nothing
   | otherwise = (root :) <$> msum (fmap (pathTo n) children)
 
-solutions :: IO (Int, Int)
-solutions = do
-  input <- getInput
-  return (day06a input, day06b input)
+solution :: Solution Orbits Int Int
+solution = Solution "Day 6" "input/Year2019/day6.txt" parse part1 part2

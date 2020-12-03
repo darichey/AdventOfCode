@@ -1,19 +1,19 @@
-module Year2019.Day09 (solutions) where
+module Year2019.Day09 (solution) where
 
 import qualified Data.IntMap.Strict as M
 import Data.List (unfoldr)
 import Data.List.Split (splitOn)
 import Data.Tuple (swap)
+import Solution (Solution (Solution))
 
 newtype IntCode = IntCode (M.IntMap Int) deriving (Show)
 
 data Program = Program Int [Int] [Int] Int IntCode deriving (Show)
 
-getInput :: IO Program
-getInput = do
-  input <- readFile "input/Year2019/day9.txt"
+parse :: String -> Maybe Program
+parse input =
   let ins = M.fromAscList $ zip [0 ..] (fmap read (splitOn "," input))
-  return $ Program 0 [] [] 0 (IntCode ins)
+   in Just $ Program 0 [] [] 0 (IntCode ins)
 
 valueOf :: Program -> Param -> Int
 valueOf (Program _ _ _ _ code) (Pos x) = valueAt code x
@@ -145,13 +145,11 @@ apply ps@(Program ptr input output relBase code) = case nextIns ps of
       offset = valueOf ps p1
   Terminate -> Program (-1) input output relBase code
 
-day09a :: Program -> Int
-day09a = head . output . run . withInput [1]
+part1 :: Program -> Int
+part1 = head . output . run . withInput [1]
 
-day09b :: Program -> Int
-day09b = head . output . run . withInput [2]
+part2 :: Program -> Int
+part2 = head . output . run . withInput [2]
 
-solutions :: IO (Int, Int)
-solutions = do
-  input <- getInput
-  return (day09a input, day09b input)
+solution :: Solution Program Int Int
+solution = Solution "Day 9" "input/Year2019/day9.txt" parse part1 part2

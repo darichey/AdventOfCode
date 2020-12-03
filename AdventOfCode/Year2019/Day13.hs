@@ -1,10 +1,12 @@
-module Year2019.Day13 (solutions) where
+module Year2019.Day13 (solution) where
 
 import qualified Data.IntMap.Strict as M
 import Data.List (unfoldr)
 import Data.List.Split (splitOn)
 import qualified Data.Text as T
 import Data.Tuple (swap)
+import Solution (Solution (Solution))
+import Util (occurrences)
 
 newtype IntCode = IntCode (M.IntMap Int) deriving (Show)
 
@@ -64,7 +66,7 @@ data EndState = NotStarted | Suspended | Terminated deriving (Show, Eq)
 
 state :: Program -> EndState
 state (Program ptr _ _ _ _) | ptr == -1 = Terminated
-state prog@(Program _ input _ _ code) =
+state prog@(Program _ input _ _ _) =
   case (nextIns prog, input) of
     (In _, []) -> Suspended
     _ -> NotStarted
@@ -99,9 +101,6 @@ nextIns (Program ptr _ _ _ code) =
 
 withInput :: [Int] -> Program -> Program
 withInput input (Program ptr _ output relBase code) = Program ptr input output relBase code
-
-clearOutput :: Program -> Program
-clearOutput (Program ptr input output relBase code) = Program ptr input [] relBase code
 
 output :: Program -> [Int]
 output (Program _ _ output _ _) = output
@@ -148,9 +147,7 @@ apply ps@(Program ptr input output relBase code) = case nextIns ps of
       offset = valueOf ps p1
   Terminate -> Program (-1) input output relBase code
 
-count :: Eq a => a -> [a] -> Int
-count x = length . filter (x ==)
-
+every :: Int -> [a] -> [a]
 every n xs = case drop (n -1) xs of
   (y : ys) -> y : every n ys
   [] -> []
@@ -168,20 +165,18 @@ addWall original = T.unpack edited
 setFtp :: Program -> Program
 setFtp (Program ptr input output relBase (IntCode code)) = Program ptr input output relBase (IntCode (M.insert 0 2 code))
 
-day13a :: String -> Int
-day13a rawCode = (count 2 . every 3 . reverse . output . run) prog
+part1 :: String -> Int
+part1 rawCode = (occurrences 2 . every 3 . reverse . output . run) prog
   where
     prog = makeProg rawCode
 
-day13b :: String -> Int
-day13b rawCode = (head . output . run) prog
+part2 :: String -> Int
+part2 rawCode = (head . output . run) prog
   where
     prog = setFtp (withInput (repeat 0) (makeProg (addWall rawCode)))
 
-getInput :: IO String
-getInput = readFile "input/Year2019/day13.txt"
+parse :: String -> Maybe String
+parse = Just
 
-solutions :: IO (Int, Int)
-solutions = do
-  input <- getInput
-  return (day13a input, day13b input)
+solution :: Solution String Int Int
+solution = Solution "Day 13" "input/Year2019/day13.txt" parse part1 part2

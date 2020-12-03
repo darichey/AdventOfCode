@@ -1,12 +1,14 @@
-module Year2019.Day12 (solutions) where
+module Year2019.Day12 (solution) where
 
 import Control.Lens ((^.))
-import Data.Either (fromRight)
+import Data.Either.Combinators (rightToMaybe)
 import qualified Data.Set as Set
 import Linear.V3 (R1 (_x), R2 (_y), R3 (_z), V3 (..))
 import Linear.Vector (Additive (liftI2, (^+^)), sumV)
+import Solution (Solution (Solution))
 import Text.Parsec (sepBy, string)
-import Text.Parsec.String (Parser, parseFromFile)
+import qualified Text.Parsec as P
+import Text.Parsec.String (Parser)
 import Text.ParserCombinators.Parsec.Number (int)
 
 type Position = V3 Int
@@ -66,33 +68,29 @@ firstRepeat = firstRepeat' 0 Set.empty
       | Set.member x seen = n
       | otherwise = firstRepeat' (n + 1) (Set.insert x seen) xs
 
-day12a :: Universe -> Int
-day12a u = sum $ fmap energy (simulate u !! 1000)
+part1 :: Universe -> Int
+part1 u = sum $ fmap energy (simulate u !! 1000)
 
-day12b :: Universe -> Int
-day12b universe = foldl1 lcm (fmap (`period` universes) [(^. _x), (^. _y), (^. _z)])
+part2 :: Universe -> Int
+part2 universe = foldl1 lcm (fmap (`period` universes) [(^. _x), (^. _y), (^. _z)])
   where
     universes = simulate universe
 
-universe :: Parser Universe
-universe = moon `sepBy` string "\n"
+parse :: String -> Maybe Universe
+parse = rightToMaybe . P.parse universe ""
   where
-    moon = do
-      _ <- string "<x="
-      x <- int
-      _ <- string ", y="
-      y <- int
-      _ <- string ", z="
-      z <- int
-      _ <- string ">"
-      return $ Moon (V3 x y z) (V3 0 0 0)
+    universe :: Parser Universe
+    universe = moon `sepBy` string "\n"
+      where
+        moon = do
+          _ <- string "<x="
+          x <- int
+          _ <- string ", y="
+          y <- int
+          _ <- string ", z="
+          z <- int
+          _ <- string ">"
+          return $ Moon (V3 x y z) (V3 0 0 0)
 
-getInput :: IO Universe
-getInput = do
-  parsed <- parseFromFile universe "input/Year2019/day12.txt"
-  return $ fromRight [] parsed
-
-solutions :: IO (Int, Int)
-solutions = do
-  input <- getInput
-  return (day12a input, day12b input)
+solution :: Solution Universe Int Int
+solution = Solution "Day 12" "input/Year2019/day12.txt" parse part1 part2

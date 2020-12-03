@@ -1,20 +1,20 @@
-module Year2019.Day11 (solutions) where
+module Year2019.Day11 (solution) where
 
 import qualified Data.IntMap.Strict as M
 import Data.List (transpose, unfoldr)
 import Data.List.Split (chunksOf, splitOn)
 import qualified Data.Map as Map
 import Data.Tuple (swap)
+import Solution (Solution (Solution))
 
 newtype IntCode = IntCode (M.IntMap Int) deriving (Show)
 
 data Program = Program Int [Int] [Int] Int IntCode deriving (Show)
 
-getInput :: IO Program
-getInput = do
-  input <- readFile "input/Year2019/day11.txt"
+parse :: String -> Maybe Program
+parse input =
   let ins = M.fromAscList $ zip [0 ..] (fmap read (splitOn "," input))
-  return $ Program 0 [] [] 0 (IntCode ins)
+   in Just $ Program 0 [] [] 0 (IntCode ins)
 
 valueOf :: Program -> Param -> Int
 valueOf (Program _ _ _ _ code) (Pos x) = valueAt code x
@@ -199,7 +199,7 @@ colorAt :: Point -> Board -> Color
 colorAt = Map.findWithDefault B
 
 runWithCurrentColor :: Position -> Board -> Program -> (Position, Board, Program)
-runWithCurrentColor pos@(Position facing p) board prog = (pos', board', prog')
+runWithCurrentColor (Position facing p) board prog = (pos', board', prog')
   where
     c = colorAt p board
     prog' = run (withInput [colorToInt c] prog)
@@ -218,21 +218,19 @@ runRobot pos board prog =
 showBoard :: Board -> String
 showBoard board = unlines $ transpose $ chunksOf 100 (fmap (\p -> colorToChar $ colorAt p board) [(x, y) | x <- [-50 .. 49], y <- [-50 .. 49]])
 
-day11a :: Program -> Int
-day11a prog = Map.size board'
+part1 :: Program -> Int
+part1 prog = Map.size board'
   where
     pos = Position U (0, 0)
     board = Map.empty
-    (pos', board', prog') = runRobot pos board prog
+    (_, board', _) = runRobot pos board prog
 
-day11b :: Program -> String
-day11b prog = showBoard board'
+part2 :: Program -> String
+part2 prog = showBoard board'
   where
     pos = Position U (0, 0)
     board = Map.singleton (0, 0) W
-    (pos', board', prog') = runRobot pos board prog
+    (_, board', _) = runRobot pos board prog
 
-solutions :: IO (Int, Int)
-solutions = do
-  input <- getInput
-  return (day11a input, 0)
+solution :: Solution Program Int String
+solution = Solution "Day 11" "input/Year2019/day11.txt" parse part1 part2

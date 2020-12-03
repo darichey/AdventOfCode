@@ -1,16 +1,17 @@
-module Year2019.Day05 (solutions) where
+module Year2019.Day05 (solution) where
 
 import Data.List (unfoldr)
 import Data.List.Split (splitOn)
 import Data.Tuple (swap)
 import qualified Data.Vector as V
+import Solution (Solution (Solution))
 
 newtype IntCode = IntCode (V.Vector Int) deriving (Show)
 
 data Program = Program Int [Int] [Int] IntCode deriving (Show)
 
-getInput :: IO Program
-getInput = Program 0 [] [] . IntCode . V.fromList . fmap read . splitOn "," <$> readFile "input/Year2019/day5.txt"
+parse :: String -> Maybe Program
+parse = Just . Program 0 [] [] . IntCode . V.fromList . fmap read . splitOn ","
 
 valueOf :: IntCode -> Param -> Int
 valueOf code (Pos x) = valueAt code x
@@ -119,13 +120,11 @@ apply ps@(Program ptr input output code) = case nextIns ps of
       code' = update p3 (if x == y then 1 else 0) code
   Terminate -> Program (-1) input output code
 
-day05a :: Program -> Int
-day05a = head . run . withInput [1]
+part1 :: Program -> Int
+part1 = head . run . withInput [1]
 
-day05b :: Program -> Int
-day05b = head . run . withInput [5]
+part2 :: Program -> Int
+part2 = head . run . withInput [5]
 
-solutions :: IO (Int, Int)
-solutions = do
-  input <- getInput
-  return (day05a input, day05b input)
+solution :: Solution Program Int Int
+solution = Solution "Day 5" "input/Year2019/day5.txt" parse part1 part2

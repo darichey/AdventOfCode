@@ -1,10 +1,11 @@
-module Year2019.Day10 (solutions) where
+module Year2019.Day10 (solution) where
 
 import Data.List (maximumBy, sortOn)
 import qualified Data.Map as M
 import Data.Maybe (catMaybes, mapMaybe)
 import Data.Ord (Down (Down), comparing)
 import Data.Ratio ((%))
+import Solution (Solution (Solution))
 
 type Point = (Int, Int)
 
@@ -16,13 +17,12 @@ type LineSegment = (Point, Point)
 instance Show Polar where
   show (Polar r theta) = "(" ++ take 5 (show r) ++ ", " ++ take 5 (show theta) ++ ")"
 
-getInput :: IO [Point]
-getInput = do
-  contents <- readFile "input/Year2019/day10.txt"
+parse :: String -> Maybe [Point]
+parse contents =
   let l = lines contents
-  let points = [(x, y) | x <- [0 .. length (head l) - 1], y <- [0 .. length l -1]]
-  let s = fmap (\(x, y) -> if ((l !! y) !! x) == '#' then Just (x, - y) else Nothing) points
-  return $ catMaybes s
+      points = [(x, y) | x <- [0 .. length (head l) - 1], y <- [0 .. length l -1]]
+      s = fmap (\(x, y) -> if ((l !! y) !! x) == '#' then Just (x, - y) else Nothing) points
+   in Just $ catMaybes s
 
 between (ax, ay) (bx, by) (cx, cy) = dot >= 0 && dot <= squaredLength
   where
@@ -97,19 +97,20 @@ rotate90clockwise (x, y) = (y, - x)
 rotate90counter :: Point -> Point
 rotate90counter (x, y) = (- y, x)
 
-day10a :: [Point] -> (Point, Int)
-day10a asteroids = maximumBy (comparing snd) $ fmap (\p -> (p, length $ allVisibleFrom p asteroids)) asteroids
+bestStation :: [Point] -> (Point, Int)
+bestStation asteroids = maximumBy (comparing snd) $ fmap (\p -> (p, length $ allVisibleFrom p asteroids)) asteroids
 
-day10b :: Point -> [Point] -> Int
-day10b stationLoc asteroids = x * 100 + y
+part1 :: [Point] -> Int
+part1 = snd . bestStation
+
+part2 :: [Point] -> Int
+part2 asteroids = x * 100 + y
   where
+    (stationLoc, _) = bestStation asteroids
     transformed = removeItem (0, 0) $ fmap rotate90clockwise (shift stationLoc asteroids)
     untransformed = fmap (shift1 (shift1 stationLoc (0, 0)) . rotate90counter) (toDestroy transformed)
     f = fmap (\(x, y) -> (x, - y)) untransformed
     (x, y) = f !! 198
 
-solutions :: IO (Int, Int)
-solutions = do
-  input <- getInput
-  let (stationLoc, numVisible) = day10a input
-  return (numVisible, day10b stationLoc input)
+solution :: Solution [Point] Int Int
+solution = Solution "Day 10" "input/Year2019/day10.txt" parse part1 part2

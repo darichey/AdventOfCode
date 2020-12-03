@@ -1,8 +1,10 @@
-module Year2019.Day08 (solutions) where
+module Year2019.Day08 (solution) where
 
 import Data.List (minimumBy)
 import Data.List.Split (chunksOf)
 import Data.Ord (comparing)
+import Solution (Solution (Solution))
+import Util (occurrences)
 
 type Pixel = Char
 
@@ -10,21 +12,18 @@ type Layer = [Pixel]
 
 type Image = [Layer]
 
-count :: Eq a => a -> [a] -> Int
-count x = length . filter (x ==)
+parse :: String -> Maybe Image
+parse = Just . chunksOf 150
 
-getInput :: IO Image
-getInput = chunksOf 150 <$> readFile "input/Year2019/day8.txt"
-
-day08a :: Image -> Int
-day08a layers = ones * twos
+part1 :: Image -> Int
+part1 layers = ones * twos
   where
-    leastZeros = minimumBy (comparing (count '0')) layers
-    ones = count '1' leastZeros
-    twos = count '2' leastZeros
+    leastZeros = minimumBy (comparing (occurrences '0')) layers
+    ones = occurrences '1' leastZeros
+    twos = occurrences '2' leastZeros
 
-day08b :: Image -> String
-day08b layers = unlines $ chunksOf 25 (fmap (pixelToChar . top layers) [0 .. 149])
+part2 :: Image -> String
+part2 layers = unlines $ chunksOf 25 (fmap (pixelToChar . top layers) [0 .. 149])
 
 top :: Image -> Int -> Pixel
 top layers pixel = head $ filter (/= '2') (fmap (!! pixel) layers)
@@ -33,7 +32,5 @@ pixelToChar :: Pixel -> Char
 pixelToChar '1' = '#'
 pixelToChar _ = ' '
 
-solutions :: IO (Int, String)
-solutions = do
-  input <- getInput
-  return (day08a input, day08b input)
+solution :: Solution Image Int String
+solution = Solution "Day 8" "input/Year2019/day8.txt" parse part1 part2

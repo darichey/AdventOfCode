@@ -1,10 +1,14 @@
-module Year2019.Day04 (solutions) where
+{-# LANGUAGE TypeApplications #-}
 
+module Year2019.Day04 (solution) where
+
+import Data.Ix (range)
 import Data.List (group)
 import Data.List.Split (splitOn)
+import Solution (Solution (Solution))
 
-getInput :: IO (Int, Int)
-getInput = firstTwo . fmap read . splitOn "-" <$> readFile "input/Year2019/day4.txt"
+parse :: String -> Maybe [String]
+parse = Just . fmap show . range . firstTwo . fmap (read @Int) . splitOn "-"
   where
     firstTwo [x, y] = (x, y)
 
@@ -23,14 +27,11 @@ increasing = all (uncurry (<=)) . pairs
 both :: (a -> Bool) -> (a -> Bool) -> a -> Bool
 both f g x = f x && g x
 
-day04a :: [String] -> Int
-day04a = length . filter (both increasing twoAdjacent)
+part1 :: [String] -> Int
+part1 = length . filter (both increasing twoAdjacent)
 
-day04b :: [String] -> Int
-day04b = length . filter (both increasing exactlyPair)
+part2 :: [String] -> Int
+part2 = length . filter (both increasing exactlyPair)
 
-solutions :: IO (Int, Int)
-solutions = do
-  (a, b) <- getInput
-  let nums = fmap show [a .. b]
-  return (day04a nums, day04b nums)
+solution :: Solution [String] Int Int
+solution = Solution "Day 4" "input/Year2019/day4.txt" parse part1 part2

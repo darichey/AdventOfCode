@@ -1,9 +1,9 @@
--- https://adventofcode.com/2019/day/1
-module Year2019.Day01 (solutions) where
+module Year2019.Day01 (solution) where
 
--- | Reads the list of modules masses as a [Int]
-getInput :: IO [Int]
-getInput = fmap read . lines <$> readFile "input/Year2019/day1.txt"
+import Solution (Solution (Solution))
+
+parse :: String -> Maybe [Int]
+parse = Just . fmap read . lines
 
 -- | Claculates the simple amount of fuel required for a module
 fuel :: Int -> Int
@@ -17,13 +17,11 @@ allFuel x = y + allFuel y
   where
     y = fuel x
 
-day01a :: [Int] -> Int
-day01a = sum . fmap fuel
+part1 :: [Int] -> Int
+part1 = sum . fmap fuel
 
-day01b :: [Int] -> Int
-day01b = sum . fmap allFuel
+part2 :: [Int] -> Int
+part2 = sum . fmap allFuel
 
-solutions :: IO (Int, Int)
-solutions = do
-  input <- getInput
-  return (day01a input, day01b input)
+solution :: Solution [Int] Int Int
+solution = Solution "Day 1" "input/Year2019/day1.txt" parse part1 part2

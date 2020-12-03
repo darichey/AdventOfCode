@@ -1,14 +1,14 @@
 -- https://adventofcode.com/2019/day/2
-module Year2019.Day02 (solutions) where
+module Year2019.Day02 (solution) where
 
 import Data.List.Split (splitOn)
 import Data.Vector (Vector, fromList, head, (!), (//))
+import Solution (Solution (Solution))
 
 type Program = Vector Int
 
--- | Reads the input IntCode program as a Program
-getInput :: IO Program
-getInput = fromList . fmap read . splitOn "," <$> readFile "input/Year2019/day2.txt"
+parse :: String -> Maybe Program
+parse = Just . fromList . fmap read . splitOn ","
 
 -- | Runs an IntCode program given a noun and a verb. The result is the value
 --  at position 0 after the program completes.
@@ -30,15 +30,15 @@ solve noun verb prog = Data.Vector.head (solve' 0 (fix prog))
     fix prog = prog // [(1, noun), (2, verb)]
 
 -- | Solves part one by running the IntCode program with noun=12 and verb=2
-day02a :: Program -> Int
-day02a = solve 12 2
+part1 :: Program -> Int
+part1 = solve 12 2
 
 -- | Solves part two by running the program first with noun=0,verb=0 and then
 --  with noun=1,verb=0. We realize that the result of the program has a linear
 --  relationship with the noun and verb. Specifically,
 --  res = base + noun*delta + base. We find the solution for the desired res
-day02b :: Program -> Int
-day02b prog = noun * 100 + verb
+part2 :: Program -> Int
+part2 prog = noun * 100 + verb
   where
     base = solve 0 0 prog
     delta = solve 1 0 prog - base
@@ -51,7 +51,5 @@ day02b prog = noun * 100 + verb
 --                                                      verb <- [0..99],
 --                                                      solve noun verb prog == 19690720]
 
-solutions :: IO (Int, Int)
-solutions = do
-  input <- getInput
-  return (day02a input, day02b input)
+solution :: Solution Program Int Int
+solution = Solution "Day 2" "input/Year2019/day2.txt" parse part1 part2

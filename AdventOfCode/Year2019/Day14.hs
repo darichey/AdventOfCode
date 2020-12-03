@@ -1,9 +1,11 @@
-module Year2019.Day14 (solutions) where
+module Year2019.Day14 (solution) where
 
-import Data.Either (fromRight)
+import Data.Either.Combinators (rightToMaybe)
 import qualified Data.Map as Map
+import Solution (Solution (Solution))
 import Text.Parsec (char, letter, many1, sepBy, space, string)
-import Text.Parsec.String (Parser, parseFromFile)
+import qualified Text.Parsec as P
+import Text.Parsec.String (Parser)
 import Text.ParserCombinators.Parsec.Number (int)
 
 data Chemical = Chemical String Int
@@ -15,25 +17,6 @@ data Reaction = Reaction Chemical [Chemical]
 type Recipes = Map.Map String Reaction
 
 type Leftovers = Map.Map String Int
-
-chemical :: Parser Chemical
-chemical = do
-  amount <- int
-  _ <- space
-  name <- many1 letter
-  return $ Chemical name amount
-
-reaction :: Parser Reaction
-reaction = do
-  input <- chemical `sepBy` string ", "
-  _ <- string " => "
-  output <- chemical
-  return $ Reaction output input
-
-recipes :: Parser Recipes
-recipes = do
-  reactions <- reaction `sepBy` char '\n'
-  return $ (Map.fromList . fmap (\r@(Reaction (Chemical name _) _) -> (name, r))) reactions
 
 multiplyChem :: Chemical -> Int -> Chemical
 multiplyChem (Chemical name amt) n = Chemical name (amt * n)
@@ -76,18 +59,33 @@ binarySearch recipes low high
     mid = low + ((high - low) `div` 2)
     ore = oreRequired recipes (Chemical "FUEL" mid)
 
-getInput :: IO Recipes
-getInput = do
-  parsed <- parseFromFile recipes "input/Year2019/day14.txt"
-  return $ fromRight Map.empty parsed
+parse :: String -> Maybe Recipes
+parse = rightToMaybe . P.parse recipes ""
+  where
+    chemical :: Parser Chemical
+    chemical = do
+      amount <- int
+      _ <- space
+      name <- many1 letter
+      return $ Chemical name amount
 
-day14a :: Recipes -> Int
-day14a recipes = oreRequired recipes (Chemical "FUEL" 1)
+    reaction :: Parser Reaction
+    reaction = do
+      input <- chemical `sepBy` string ", "
+      _ <- string " => "
+      output <- chemical
+      return $ Reaction output input
 
-day14b :: Recipes -> Int
-day14b recipes = binarySearch recipes 0 (10 ^ 12) - 1
+    recipes :: Parser Recipes
+    recipes = do
+      reactions <- reaction `sepBy` char '\n'
+      return $ (Map.fromList . fmap (\r@(Reaction (Chemical name _) _) -> (name, r))) reactions
 
-solutions :: IO (Int, Int)
-solutions = do
-  input <- getInput
-  return (day14a input, day14b input)
+part1 :: Recipes -> Int
+part1 recipes = oreRequired recipes (Chemical "FUEL" 1)
+
+part2 :: Recipes -> Int
+part2 recipes = binarySearch recipes 0 (10 ^ 12) - 1
+
+solution :: Solution Recipes Int Int
+solution = Solution "Day 14" "input/Year2019/day14.txt" parse part1 part2
