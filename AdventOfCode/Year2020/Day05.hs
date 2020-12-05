@@ -14,10 +14,9 @@ part1 :: IntSet.IntSet -> Int
 part1 = IntSet.findMax
 
 part2 :: IntSet.IntSet -> Int
-part2 seats = IntSet.findMin missing + 1
+part2 = IntSet.findMin . (all >>= IntSet.difference)
   where
-    matching = IntSet.filter (\k -> IntSet.member (k + 1) seats) seats
-    missing = seats IntSet.\\ matching
+    all seats = IntSet.fromList [IntSet.findMin seats .. IntSet.findMax seats]
 
 solution :: Solution IntSet.IntSet Int Int
 solution = Solution "Day 5" "input/Year2020/day5.txt" parse part1 part2
