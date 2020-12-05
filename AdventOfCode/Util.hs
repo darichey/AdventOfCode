@@ -1,4 +1,4 @@
-module Util (count, occurrences, xor, NoQuotes (NoQuotes)) where
+module Util (count, occurrences, NoQuotes (NoQuotes)) where
 
 import Control.Arrow ((>>>))
 
@@ -11,6 +11,3 @@ count p = filter p >>> length
 
 occurrences :: Eq a => a -> [a] -> Int
 occurrences x = count (x ==)
-
-xor :: Bool -> Bool -> Bool
-xor = (/=)

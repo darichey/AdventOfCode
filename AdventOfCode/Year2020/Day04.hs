@@ -1,4 +1,4 @@
-module Year2020.Day04 where
+module Year2020.Day04 (solution) where
 
 import Control.Monad (guard, void)
 import Data.Either (fromRight)
@@ -6,11 +6,11 @@ import Data.Ix (Ix (inRange))
 import Data.List (isInfixOf)
 import Data.List.Split (splitOn)
 import Solution (Solution (Solution))
+import Text.Parsec (alphaNum, char, choice, digit, many, oneOf, sepBy, space, string, try, (<|>))
 import qualified Text.Parsec as P
 import Text.Parsec.String (Parser)
 import Text.ParserCombinators.Parsec.Number (nat)
 import Util (count)
-import Text.Parsec (space, alphaNum, many, sepBy, oneOf, char, (<|>), choice, try, string, digit)
 
 parse :: String -> Maybe [String]
 parse = Just . splitOn "\n\n"
@@ -47,7 +47,7 @@ entry = do
     guardInRange range = guard . inRange range
     ofLength p n = p >>= (guard . (== n) . length)
     cm = try (nat <* string "cm") >>= guardInRange (150, 193)
-    inch = try (nat <* string "in") >>= guardInRange (59,76)
+    inch = try (nat <* string "in") >>= guardInRange (59, 76)
 
 solution :: Solution [String] Int Int
 solution = Solution "Day 4" "input/Year2020/day4.txt" parse part1 part2

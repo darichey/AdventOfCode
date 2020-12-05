@@ -1,5 +1,6 @@
 module Year2020.Day02 where
 
+import Data.Bits (xor)
 import Data.Either.Combinators (rightToMaybe)
 import Data.Ix (inRange)
 import Solution (Solution (Solution))
@@ -7,7 +8,7 @@ import Text.Parsec (alphaNum, anyChar, char, many, sepBy, space, string)
 import qualified Text.Parsec as P
 import Text.Parsec.String (Parser)
 import Text.ParserCombinators.Parsec.Number (nat)
-import Util (count, occurrences, xor)
+import Util (count, occurrences)
 
 data Password = Password {num1 :: Int, num2 :: Int, letter :: Char, str :: String}
 
