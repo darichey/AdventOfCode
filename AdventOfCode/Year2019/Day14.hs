@@ -3,10 +3,11 @@ module Year2019.Day14 (solution) where
 import Data.Either.Combinators (rightToMaybe)
 import qualified Data.Map as Map
 import Solution (Solution (Solution))
-import Text.Parsec (char, letter, many1, sepBy, space, string)
-import qualified Text.Parsec as P
-import Text.Parsec.String (Parser)
-import Text.ParserCombinators.Parsec.Number (int)
+import Text.Megaparsec (sepBy, some)
+import qualified Text.Megaparsec as P
+import Text.Megaparsec.Char (char, letterChar, spaceChar, string)
+import qualified Text.Megaparsec.Char.Lexer as L
+import Util (Parser)
 
 data Chemical = Chemical String Int
   deriving (Show, Eq)
@@ -64,15 +65,15 @@ parse = rightToMaybe . P.parse recipes ""
   where
     chemical :: Parser Chemical
     chemical = do
-      amount <- int
-      _ <- space
-      name <- many1 letter
+      amount <- L.decimal
+      spaceChar
+      name <- some letterChar
       return $ Chemical name amount
 
     reaction :: Parser Reaction
     reaction = do
       input <- chemical `sepBy` string ", "
-      _ <- string " => "
+      string " => "
       output <- chemical
       return $ Reaction output input
 

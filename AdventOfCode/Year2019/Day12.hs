@@ -6,10 +6,11 @@ import qualified Data.Set as Set
 import Linear.V3 (R1 (_x), R2 (_y), R3 (_z), V3 (..))
 import Linear.Vector (Additive (liftI2, (^+^)), sumV)
 import Solution (Solution (Solution))
-import Text.Parsec (sepBy, string)
-import qualified Text.Parsec as P
-import Text.Parsec.String (Parser)
-import Text.ParserCombinators.Parsec.Number (int)
+import Text.Megaparsec (sepBy)
+import qualified Text.Megaparsec as P
+import Text.Megaparsec.Char (string)
+import qualified Text.Megaparsec.Char.Lexer as L
+import Util (Parser)
 
 type Position = V3 Int
 
@@ -83,13 +84,13 @@ parse = rightToMaybe . P.parse universe ""
     universe = moon `sepBy` string "\n"
       where
         moon = do
-          _ <- string "<x="
-          x <- int
-          _ <- string ", y="
-          y <- int
-          _ <- string ", z="
-          z <- int
-          _ <- string ">"
+          string "<x="
+          x <- L.decimal
+          string ", y="
+          y <- L.decimal
+          string ", z="
+          z <- L.decimal
+          string ">"
           return $ Moon (V3 x y z) (V3 0 0 0)
 
 solution :: Solution Universe Int Int

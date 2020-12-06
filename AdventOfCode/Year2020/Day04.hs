@@ -6,11 +6,11 @@ import Data.Ix (Ix (inRange))
 import Data.List (isInfixOf)
 import Data.List.Split (splitOn)
 import Solution (Solution (Solution))
-import Text.Parsec (alphaNum, char, choice, digit, many, oneOf, sepBy, space, string, try, (<|>))
-import qualified Text.Parsec as P
-import Text.Parsec.String (Parser)
-import Text.ParserCombinators.Parsec.Number (nat)
-import Util (count)
+import Text.Megaparsec (choice, many, oneOf, sepBy, some, try, (<|>))
+import qualified Text.Megaparsec as P
+import Text.Megaparsec.Char (alphaNumChar, char, digitChar, spaceChar, string)
+import qualified Text.Megaparsec.Char.Lexer as L
+import Util (Parser, count)
 
 parse :: String -> Maybe [String]
 parse = Just . splitOn "\n\n"
@@ -27,27 +27,27 @@ part2 = count valid
     valid input = fromRight False $ hasAllKeys . show <$> P.parse passport "" input
 
 passport :: Parser [String]
-passport = entry `sepBy` space
+passport = entry `sepBy` spaceChar
 
 entry :: Parser String
 entry = do
-  key <- many alphaNum
+  key <- some alphaNumChar
   char ':'
   case key of
-    "byr" -> nat >>= guardInRange (1920, 2002)
-    "iyr" -> nat >>= guardInRange (2010, 2020)
-    "eyr" -> nat >>= guardInRange (2020, 2030)
+    "byr" -> L.decimal >>= guardInRange (1920, 2002)
+    "iyr" -> L.decimal >>= guardInRange (2010, 2020)
+    "eyr" -> L.decimal >>= guardInRange (2020, 2030)
     "hgt" -> cm <|> inch
     "hcl" -> char '#' *> many (oneOf "0123456789abcdef") `ofLength` 6
     "ecl" -> void $ choice (try . string <$> ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"])
-    "pid" -> many digit `ofLength` 9
-    "cid" -> void $ many alphaNum
+    "pid" -> many digitChar `ofLength` 9
+    "cid" -> void $ many alphaNumChar
   return key
   where
     guardInRange range = guard . inRange range
     ofLength p n = p >>= (guard . (== n) . length)
-    cm = try (nat <* string "cm") >>= guardInRange (150, 193)
-    inch = try (nat <* string "in") >>= guardInRange (59, 76)
+    cm = try (L.decimal <* string "cm") >>= guardInRange (150, 193)
+    inch = try (L.decimal <* string "in") >>= guardInRange (59, 76)
 
 solution :: Solution [String] Int Int
 solution = Solution "Day 4" "input/Year2020/day4.txt" parse part1 part2

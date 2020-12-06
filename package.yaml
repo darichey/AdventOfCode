@@ -10,13 +10,12 @@ dependencies:
 - containers
 - fgl
 - linear
-- parsec
-- parsec-numbers
 - lens
 - text
 - cmdargs
 - ordered-containers
 - either
+- megaparsec
 
 executables:
   AdventOfCode-exe:

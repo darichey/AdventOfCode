@@ -4,11 +4,11 @@ import Data.Bits (xor)
 import Data.Either.Combinators (rightToMaybe)
 import Data.Ix (inRange)
 import Solution (Solution (Solution))
-import Text.Parsec (alphaNum, anyChar, char, many, sepBy, space, string)
-import qualified Text.Parsec as P
-import Text.Parsec.String (Parser)
-import Text.ParserCombinators.Parsec.Number (nat)
-import Util (count, occurrences)
+import Text.Megaparsec (many, sepBy)
+import qualified Text.Megaparsec as P
+import Text.Megaparsec.Char (alphaNumChar, char, letterChar, spaceChar, string)
+import qualified Text.Megaparsec.Char.Lexer as L
+import Util (Parser, count, occurrences)
 
 data Password = Password {num1 :: Int, num2 :: Int, letter :: Char, str :: String}
 
@@ -20,13 +20,13 @@ parse = rightToMaybe . P.parse passwords ""
 
     password :: Parser Password
     password = do
-      num1 <- nat
+      num1 <- L.decimal
       char '-'
-      num2 <- nat
-      space
-      letter <- anyChar
+      num2 <- L.decimal
+      spaceChar
+      letter <- letterChar
       string ": "
-      str <- many alphaNum
+      str <- many alphaNumChar
       return $ Password num1 num2 letter str
 
 part1 :: [Password] -> Int
