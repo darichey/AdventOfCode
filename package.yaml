@@ -8,12 +8,10 @@ dependencies:
 - split
 - vector
 - containers
-- fgl
-- linear
-- lens
-- text
+- linear # only used for Year2019.Day12 and not very much.. remove eventually
+- lens # only used for Year2019.Day12 and not very much.. remove eventually
+- text # only used for Year2019.Day13
 - cmdargs
-- ordered-containers
 - either
 - megaparsec
 

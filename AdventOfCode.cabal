@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 35a4ab05c7bb41dba7cf2dbfa3b726be64e52ac9bac94fc1e8351ae01f17feb1
+-- hash: 64bf8665ffc6e4010db37befee3eda1d4548f44024066fce2a43fa599f002abb
 
 name:           AdventOfCode
 version:        0.1
@@ -52,11 +52,9 @@ executable AdventOfCode-exe
     , cmdargs
     , containers
     , either
-    , fgl
     , lens
     , linear
     , megaparsec
-    , ordered-containers
     , split
     , text
     , vector
