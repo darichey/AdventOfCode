@@ -1,4 +1,4 @@
-module Year2020.Day07 where
+module Year2020.Day07 (solution) where
 
 import Data.List (nub)
 import qualified Data.Map as Map
