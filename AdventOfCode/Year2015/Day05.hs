@@ -1,8 +1,8 @@
 module Year2015.Day05 (solution) where
 
-import Data.List (group, isInfixOf, tails)
+import Data.List (group, isInfixOf)
 import Solution (Solution (Solution))
-import Util (count)
+import Util (count, windows)
 
 parse :: String -> Maybe [String]
 parse = Just . lines
@@ -15,9 +15,6 @@ part1 = count valid
     rule1 input = length (filter (`elem` "aeiou") input) >= 3
     rule2 input = any ((>= 2) . length) (group input)
     rule3 input = not (or $ fmap (`isInfixOf` input) ["ab", "cd", "pq", "xy"])
-
-windows :: Int -> [a] -> [[a]]
-windows n = filter ((n ==) . length) . map (take n) . tails
 
 part2 :: [String] -> Int
 part2 = count valid
