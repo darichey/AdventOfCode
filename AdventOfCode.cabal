@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 3975e9f1eda02e80f393824f75f9bec550984f56bdf8d208621d957701e187ea
+-- hash: 9838473f2d2ec376c4596c492ac772a742bc3f5f003241ccc6890ca9a2ed476f
 
 name:           AdventOfCode
 version:        0.1
@@ -28,6 +28,7 @@ executable AdventOfCode-exe
       Year2015.Day03
       Year2015.Day04
       Year2015.Day05
+      Year2015.Day06
       Year2015.Year2015
       Year2019.Day01
       Year2019.Day02
