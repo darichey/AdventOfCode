@@ -9,10 +9,10 @@ newtype NoQuotes = NoQuotes String
 
 instance Show NoQuotes where show (NoQuotes str) = str
 
-count :: (a -> Bool) -> [a] -> Int
-count p = length . filter p
+count :: (Foldable t) => (a -> Bool) -> t a -> Int
+count p = foldl (\acc x -> if p x then acc + 1 else acc) 0
 
-occurrences :: Eq a => a -> [a] -> Int
+occurrences :: (Foldable t, Eq a) => a -> t a -> Int
 occurrences x = count (x ==)
 
 type Parser = Parsec Void String

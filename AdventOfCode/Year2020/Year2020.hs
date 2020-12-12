@@ -11,6 +11,7 @@ import qualified Year2020.Day07
 import qualified Year2020.Day08
 import qualified Year2020.Day09
 import qualified Year2020.Day10
+import qualified Year2020.Day11
 
 year2020 :: Year
 year2020 =
@@ -25,7 +26,7 @@ year2020 =
       printSolution Year2020.Day08.solution,
       printSolution Year2020.Day09.solution,
       printSolution Year2020.Day10.solution,
-      printSolution $ todo "Day 11",
+      printSolution Year2020.Day11.solution,
       printSolution $ todo "Day 12",
       printSolution $ todo "Day 13",
       printSolution $ todo "Day 14",
