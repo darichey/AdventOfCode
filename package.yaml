@@ -8,8 +8,8 @@ dependencies:
 - split
 - vector
 - containers
-- linear # only used for Year2019.Day12 and not very much.. remove eventually
-- lens # only used for Year2019.Day12 and not very much.. remove eventually
+- linear
+- lens
 - text # only used for Year2019.Day13
 - cmdargs
 - either
