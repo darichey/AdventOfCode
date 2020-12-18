@@ -17,8 +17,12 @@ dependencies:
 - cryptohash-md5 # only used for Year2015.Day04
 - bytestring # only used for Year2015.Day04
 - base16-bytestring # only used for Year2015.Day04
+- parser-combinators
 
 executables:
   AdventOfCode-exe:
     main: Main.hs
     source-dirs: AdventOfCode
+
+ghc-options:
+- -Wall
