@@ -1,4 +1,4 @@
-module Year2020.Day06 where
+module Year2020.Day06 (solution) where
 
 import Data.List (foldl1')
 import Data.List.Split (splitOn)

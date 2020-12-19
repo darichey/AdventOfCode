@@ -1,4 +1,4 @@
-module Year2020.Day13 where
+module Year2020.Day13 (solution) where
 
 import Data.List.Split (splitOn)
 import Data.Maybe (catMaybes, mapMaybe)

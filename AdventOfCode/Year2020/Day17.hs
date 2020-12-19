@@ -1,6 +1,5 @@
-module Year2020.Day17 where
+module Year2020.Day17 (solution) where
 
-import Data.List (iterate)
 import qualified Data.Set as Set
 import Linear (V4 (V4))
 import Solution (Solution (Solution))

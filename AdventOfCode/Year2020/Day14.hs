@@ -1,6 +1,6 @@
 {-# LANGUAGE RecordWildCards #-}
 
-module Year2020.Day14 where
+module Year2020.Day14 (solution) where
 
 import Data.Bits ((.&.), (.|.))
 import Data.Char (digitToInt, intToDigit)

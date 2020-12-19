@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell #-}
 
-module Year2020.Day12 where
+module Year2020.Day12 (solution) where
 
 import Control.Lens (makeLenses, (%~), (&), (+~), (-~), (^.))
 import Linear ((^*))

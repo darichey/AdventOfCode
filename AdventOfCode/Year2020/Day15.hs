@@ -1,4 +1,4 @@
-module Year2020.Day15 where
+module Year2020.Day15 (solution) where
 
 import qualified Data.IntMap as IntMap
 import Data.List.Split (splitOn)

@@ -1,4 +1,4 @@
-module Year2020.Day09 where
+module Year2020.Day09 (solution) where
 
 import Data.List (find)
 import Data.Maybe (fromJust, isNothing)

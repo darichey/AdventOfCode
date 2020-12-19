@@ -1,4 +1,4 @@
-module Year2020.Day02 where
+module Year2020.Day02 (solution) where
 
 import Data.Bits (xor)
 import Data.Either.Combinators (rightToMaybe)

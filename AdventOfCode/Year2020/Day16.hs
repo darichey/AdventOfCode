@@ -1,6 +1,6 @@
 {-# LANGUAGE RecordWildCards #-}
 
-module Year2020.Day16 where
+module Year2020.Day16 (solution) where
 
 import Data.Either.Combinators (rightToMaybe)
 import qualified Data.IntMap as IntMap

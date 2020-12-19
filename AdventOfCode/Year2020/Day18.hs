@@ -1,4 +1,4 @@
-module Year2020.Day18 where
+module Year2020.Day18 (solution) where
 
 import Control.Monad.Combinators.Expr (Operator (InfixL), makeExprParser)
 import Data.Either.Combinators (fromRight')
