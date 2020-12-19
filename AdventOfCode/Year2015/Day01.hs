@@ -1,8 +1,8 @@
 module Year2015.Day01 (solution) where
 
-import Solution (Solution(Solution))
 import Data.List (elemIndex)
 import Data.Maybe (fromJust)
+import Solution (Solution (Solution))
 
 parse :: String -> Maybe [Int]
 parse = Just . scanl (\acc c -> if c == '(' then acc + 1 else acc - 1) 0

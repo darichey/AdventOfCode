@@ -4,7 +4,7 @@ import Data.List (minimumBy)
 import Data.List.Split (chunksOf)
 import Data.Ord (comparing)
 import Solution (Solution (Solution))
-import Util (NoQuotes(NoQuotes), occurrences)
+import Util (NoQuotes (NoQuotes), occurrences)
 
 type Pixel = Char
 

@@ -19,7 +19,7 @@ part2 :: (Integer, [Maybe Integer]) -> Integer
 part2 = solve . congruences
   where
     congruences :: (Integer, [Maybe Integer]) -> [(Integer, Integer)]
-    congruences = mapMaybe f . zip [0,-1..] . snd
+    congruences = mapMaybe f . zip [0, -1 ..] . snd
 
     f :: (Integer, Maybe Integer) -> Maybe (Integer, Integer)
     f (x, Just y) = Just (x, y)
@@ -41,8 +41,9 @@ part2 = solve . congruences
         euclid :: Integer -> Integer -> (Integer, Integer)
         euclid _ 0 = (1, 0)
         euclid a b = (t, s - q * t)
-          where (q, r) = quotRem a b
-                (s, t) = euclid b r
+          where
+            (q, r) = quotRem a b
+            (s, t) = euclid b r
 
 solution :: Solution (Integer, [Maybe Integer]) Integer Integer
 solution = Solution "Day 13" "input/Year2020/day13.txt" parse part1 part2

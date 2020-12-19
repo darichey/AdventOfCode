@@ -6,7 +6,7 @@ import Data.List.Split (chunksOf, splitOn)
 import qualified Data.Map as Map
 import Data.Tuple (swap)
 import Solution (Solution (Solution))
-import Util (NoQuotes(NoQuotes))
+import Util (NoQuotes (NoQuotes))
 
 newtype IntCode = IntCode (M.IntMap Int) deriving (Show)
 

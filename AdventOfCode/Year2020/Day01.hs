@@ -1,9 +1,9 @@
 module Year2020.Day01 (solution) where
 
 import qualified Data.IntSet as IntSet
+import Data.Maybe (fromJust)
 import Solution (Solution (Solution))
 import Util (twoSum)
-import Data.Maybe (fromJust)
 
 parse :: String -> Maybe [Int]
 parse = Just . fmap read . lines

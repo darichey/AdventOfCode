@@ -1,16 +1,16 @@
 module Year2020.Day07 (solution) where
 
+import Data.Either.Combinators (rightToMaybe)
+import Data.Functor (($>))
 import Data.List (nub)
 import qualified Data.Map as Map
-import Solution (Solution (Solution))
-import Util (Parser, count)
-import qualified Text.Megaparsec.Char.Lexer as L
-import qualified Text.Megaparsec as P
-import Data.Either.Combinators (rightToMaybe)
-import Text.Megaparsec (optional, many, (<|>), sepBy)
-import Text.Megaparsec.Char (spaceChar, letterChar, string, char)
 import Data.Maybe (catMaybes)
-import Data.Functor (($>))
+import Solution (Solution (Solution))
+import Text.Megaparsec (many, optional, sepBy, (<|>))
+import qualified Text.Megaparsec as P
+import Text.Megaparsec.Char (char, letterChar, spaceChar, string)
+import qualified Text.Megaparsec.Char.Lexer as L
+import Util (Parser, count)
 
 type Rule = [(Int, String)]
 

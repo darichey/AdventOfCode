@@ -20,7 +20,6 @@ part2 ints = minimum range + maximum range
     range = fromJust $ find ((== part1 ints) . sum) subLists
     subLists = [2 .. length ints] >>= (`windows` ints)
 
-
 -- O(n) solution but... worse? need to experiment
 -- range = go 0 0 0
 
