@@ -18,6 +18,7 @@ dependencies:
 - bytestring # only used for Year2015.Day04
 - base16-bytestring # only used for Year2015.Day04
 - parser-combinators
+- regex-pcre
 
 executables:
   AdventOfCode-exe:
