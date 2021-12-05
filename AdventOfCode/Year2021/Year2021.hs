@@ -2,12 +2,13 @@ module Year2021.Year2021 (year2021) where
 
 import Solution (Year (..), printSolution, todo)
 import qualified Year2021.Day01
+import qualified Year2021.Day02
 
 year2021 :: Year
 year2021 =
   Year
     [ printSolution Year2021.Day01.solution,
-      printSolution $ todo "Day 2",
+      printSolution Year2021.Day02.solution,
       printSolution $ todo "Day 2",
       printSolution $ todo "Day 3",
       printSolution $ todo "Day 4",
