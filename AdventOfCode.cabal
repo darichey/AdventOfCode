@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: d1ef34f66e3044dc7321e4503c24db8a4874d402caab082663706aaf8f967447
+-- hash: bb50d11c91faf0780d346000b9194ad83b60f82c63e72f3bb0693affd665eaea
 
 name:           AdventOfCode
 version:        0.1
@@ -69,6 +69,7 @@ executable AdventOfCode-exe
       Year2021.Day02
       Year2021.Day03
       Year2021.Day04
+      Year2021.Day05
       Year2021.Year2021
       Paths_AdventOfCode
   hs-source-dirs:
@@ -85,6 +86,7 @@ executable AdventOfCode-exe
     , lens
     , linear
     , megaparsec
+    , multiset
     , parser-combinators
     , regex-pcre
     , split
