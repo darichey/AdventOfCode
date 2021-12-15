@@ -1,8 +1,8 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Util (count, occurrences, NoQuotes (NoQuotes), Parser, windows, twoSum, convolution) where
+module Util (count, occurrences, NoQuotes (NoQuotes), Parser, windows, twoSum, convolution, median) where
 
-import Data.List (tails)
+import Data.List (tails, sort)
 import qualified Data.Set as Set
 import Data.Void (Void)
 import Text.Megaparsec (Parsec)
@@ -38,3 +38,6 @@ convolution f xs = [[f x ns | (x, col) <- zip (xs !! row) [0..],
     neighbors :: Int -> Int -> [a]
     neighbors row col = [(xs !! y) !! x | (y, x) <- [(row - 1, col), (row, col - 1), (row, col + 1), (row + 1, col)],
                                           y >= 0, x >= 0, y < length xs, x < length (xs !! row)]
+
+median :: Ord a => [a] -> a
+median xs = sort xs !! (length xs `div` 2)

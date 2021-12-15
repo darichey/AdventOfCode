@@ -1,8 +1,8 @@
 module Year2021.Day07 (solution) where
 
 import Solution (Solution (Solution))
-import Data.List (sort)
 import Data.List.Split (splitOn)
+import Util (median)
 
 parse :: String -> Maybe [Int]
 parse = Just . fmap read . splitOn ","
@@ -10,7 +10,6 @@ parse = Just . fmap read . splitOn ","
 part1 :: [Int] -> Int
 part1 nums = costToMove (median nums) nums
   where
-    median xs = sort xs !! (length xs `div` 2)
     costToMove to = sum . fmap (abs . (to -))
 
 part2 :: [Int] -> Int
