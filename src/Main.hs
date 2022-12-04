@@ -9,9 +9,10 @@ import Year2015.Year2015 (year2015)
 import Year2019.Year2019 (year2019)
 import Year2020.Year2020 (year2020)
 import Year2021.Year2021 (year2021)
+import Year2022.Year2022 (year2022)
 
 years :: Map.Map String Year
-years = Map.fromList [("2015", year2015), ("2019", year2019), ("2020", year2020), ("2021", year2021)]
+years = Map.fromList [("2015", year2015), ("2019", year2019), ("2020", year2020), ("2021", year2021), ("2022", year2022)]
 
 data Args = Args {year :: String, day :: String}
   deriving (Show, Data, Typeable)
