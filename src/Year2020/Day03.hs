@@ -27,7 +27,7 @@ step :: Map -> Slope -> Pos -> Pos
 step Map {..} Slope {..} Pos {..} = Pos ((x + dx) `mod` cols) (y + dy)
 
 countTrees :: Map -> Slope -> Int
-countTrees m@Map {..} s@Slope {..} = occurrences '#' $ get m <$> visited
+countTrees m@Map {} s@Slope {} = occurrences '#' $ get m <$> visited
   where
     visited = takeWhile (onMap m) (iterate (step m s) (Pos 0 0))
 

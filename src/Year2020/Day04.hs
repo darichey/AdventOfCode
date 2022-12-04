@@ -32,7 +32,7 @@ passport = entry `sepBy` spaceChar
 entry :: Parser String
 entry = do
   key <- some alphaNumChar
-  char ':'
+  _ <- char ':'
   case key of
     "byr" -> L.decimal >>= guardInRange (1920, 2002)
     "iyr" -> L.decimal >>= guardInRange (2010, 2020)

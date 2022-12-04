@@ -34,7 +34,7 @@ oreRequired recipes c = snd $ go Map.empty c
   where
     go :: Leftovers -> Chemical -> (Leftovers, Int)
     go leftovers (Chemical _ 0) = (leftovers, 0)
-    go leftovers c@(Chemical "ORE" i) = (leftovers, i)
+    go leftovers (Chemical "ORE" i) = (leftovers, i)
     go leftovers c = foldl goAndCombine (finalLeftovers, 0) actualIngredients
       where
         (Chemical name needed, leftovers') = takeLeftovers c leftovers
@@ -66,14 +66,14 @@ parse = rightToMaybe . P.parse recipes ""
     chemical :: Parser Chemical
     chemical = do
       amount <- L.decimal
-      spaceChar
+      _ <- spaceChar
       name <- some letterChar
       return $ Chemical name amount
 
     reaction :: Parser Reaction
     reaction = do
       input <- chemical `sepBy` string ", "
-      string " => "
+      _ <- string " => "
       output <- chemical
       return $ Reaction output input
 

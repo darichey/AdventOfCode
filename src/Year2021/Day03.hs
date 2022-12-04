@@ -4,7 +4,6 @@ import Solution (Solution (Solution))
 import Util (occurrences)
 import Data.List (transpose, foldl')
 import Data.Char (digitToInt)
-import Debug.Trace (traceShowId)
 
 toDec :: String -> Int
 toDec = foldl' (\acc x -> acc * 2 + digitToInt x) 0

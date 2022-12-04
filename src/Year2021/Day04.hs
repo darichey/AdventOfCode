@@ -31,6 +31,7 @@ won marked board = any (`Set.isSubsetOf` marked) winningSets
   where
     winningSets = Set.fromList <$> board ++ transpose board
 
+unmarkedSum :: (Num a, Ord a, Foldable t) => t [a] -> Set a -> a
 unmarkedSum board marked = sum $ filter (\i -> not $ i `Set.member` marked) (concat board)
 
 part1 :: (InputSequence, [Board]) -> Int

@@ -8,7 +8,11 @@ author:             David Richey
 build-type:         Simple
 
 common warnings
-    ghc-options: -Wall
+    -- enable all warnings _except_...
+    -- shadowing is good, actually
+    -- incomplete patterns aren't good, but it's not unusual for AOC problems to have some invariant that's not worth expressing in the code
+    -- idc about type defaults
+    ghc-options: -Wall -Wno-name-shadowing -Wno-incomplete-patterns -Wno-type-defaults
 
 executable AdventOfCode
     import:           warnings

@@ -1,5 +1,6 @@
 module Year2019.Day03 (solution) where
 
+import Control.Monad ((<=<))
 import Data.List.Split (splitOn)
 import qualified Data.Map as M
 import qualified Data.Set as S
@@ -15,7 +16,7 @@ parse :: String -> Maybe (Path, Path)
 parse = Just . firstTwo . fmap parsePath . lines
   where
     firstTwo (x : y : _) = (x, y)
-    parsePath = (parseDirection =<<) . splitOn ","
+    parsePath = parseDirection <=< splitOn ","
     parseDirection (d : is) = replicate (read is) d
 
 points :: Path -> M.Map Point Int

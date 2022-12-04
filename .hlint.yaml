@@ -1,0 +1,1 @@
+- ignore: {name: Use <$>} # this is often suggested in do blocks when I don't want it

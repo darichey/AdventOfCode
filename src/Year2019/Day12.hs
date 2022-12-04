@@ -84,13 +84,13 @@ parse = rightToMaybe . P.parse universe ""
     universe = moon `sepBy` string "\n"
       where
         moon = do
-          string "<x="
+          _ <- string "<x="
           x <- L.decimal
-          string ", y="
+          _ <- string ", y="
           y <- L.decimal
-          string ", z="
+          _ <- string ", z="
           z <- L.decimal
-          string ">"
+          _ <- string ">"
           return $ Moon (V3 x y z) (V3 0 0 0)
 
 solution :: Solution Universe Int Int

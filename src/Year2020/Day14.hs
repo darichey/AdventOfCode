@@ -29,15 +29,15 @@ parse = rightToMaybe . P.parse (ins `sepBy` newline) ""
 
     setMask :: Parser Instruction
     setMask = do
-      string "mask = "
+      _ <- string "mask = "
       mask <- many alphaNumChar
       return $ SetMask mask
 
     writeValue :: Parser Instruction
     writeValue = do
-      string "mem["
+      _ <- string "mem["
       dest <- L.decimal
-      string "] = "
+      _ <- string "] = "
       value <- L.decimal
       return $ WriteValue dest value
 

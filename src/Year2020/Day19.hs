@@ -28,7 +28,7 @@ parse input = Just $ Input (IntMap.fromList rulesP) messages
         rule :: Parser (Int, Rule)
         rule = do
           i <- L.decimal
-          string ": "
+          _ <- string ": "
           r <- try str <|> try many <|> try or
           return (i, r)
 
@@ -36,8 +36,8 @@ parse input = Just $ Input (IntMap.fromList rulesP) messages
         many = Many <$> (L.decimal `sepBy` char ' ')
         or = do
           a <- P.many (L.decimal <* char ' ')
-          string "| "
-          b <- (L.decimal `sepBy` char ' ')
+          _ <- string "| "
+          b <- L.decimal `sepBy` char ' '
           return $ Or a b
 
     messages = lines stringsPart

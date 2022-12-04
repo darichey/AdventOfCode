@@ -67,7 +67,7 @@ data EndState = NotStarted | Suspended | Terminated deriving (Show, Eq)
 
 state :: Program -> EndState
 state (Program ptr _ _ _ _) | ptr == -1 = Terminated
-state prog@(Program _ input _ _ code) =
+state prog@(Program _ input _ _ _) =
   case (nextIns prog, input) of
     (In _, []) -> Suspended
     _ -> NotStarted
@@ -104,7 +104,7 @@ withInput :: [Int] -> Program -> Program
 withInput input (Program ptr _ output relBase code) = Program ptr input output relBase code
 
 clearOutput :: Program -> Program
-clearOutput (Program ptr input output relBase code) = Program ptr input [] relBase code
+clearOutput (Program ptr input _ relBase code) = Program ptr input [] relBase code
 
 output :: Program -> [Int]
 output (Program _ _ output _ _) = output

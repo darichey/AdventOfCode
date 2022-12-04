@@ -10,9 +10,9 @@ import qualified Data.Map as Map
 import Data.Maybe (fromJust)
 import qualified Data.Set as Set
 import Solution (Solution (Solution))
-import Text.Megaparsec (many, notFollowedBy, sepBy, takeWhileP, try)
+import Text.Megaparsec (many, notFollowedBy, sepBy, takeWhileP)
 import qualified Text.Megaparsec as P
-import Text.Megaparsec.Char (char, letterChar, newline, spaceChar, string)
+import Text.Megaparsec.Char (char, newline, string)
 import qualified Text.Megaparsec.Char.Lexer as L
 import Util (Parser)
 
@@ -30,9 +30,9 @@ parse = rightToMaybe . P.parse info ""
     info :: Parser TicketsInfo
     info = do
       c <- many constraint
-      string "\nyour ticket:\n"
+      _ <- string "\nyour ticket:\n"
       y <- ticket
-      string "\n\nnearby tickets:\n"
+      _ <- string "\n\nnearby tickets:\n"
       n <- ticket `sepBy` newline
       return $ TicketsInfo (Map.fromList c) y n
 
@@ -40,11 +40,11 @@ parse = rightToMaybe . P.parse info ""
     constraint = do
       notFollowedBy newline
       name <- takeWhileP Nothing (/= ':')
-      string ": "
+      _ <- string ": "
       r1 <- range
-      string " or "
+      _ <- string " or "
       r2 <- range
-      newline
+      _ <- newline
       return (name, (r1, r2))
 
     ticket :: Parser Ticket

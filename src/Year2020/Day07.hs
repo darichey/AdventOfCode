@@ -25,25 +25,25 @@ parse = rightToMaybe . P.parse rules ""
     rule :: Parser (String, Rule)
     rule = do
       name <- bagName
-      string " bags contain "
+      _ <- string " bags contain "
       children <- (hasContents <|> noContents) `sepBy` string ", "
-      char '.'
+      _ <- char '.'
       return (name, catMaybes children)
 
     bagName :: Parser String
     bagName = do
       w1 <- many letterChar
-      spaceChar
+      _ <- spaceChar
       w2 <- many letterChar
       return $ w1 ++ " " ++ w2
 
     hasContents :: Parser (Maybe (Int, String))
     hasContents = do
       num <- L.decimal
-      spaceChar
+      _ <- spaceChar
       name <- bagName
-      string " bag"
-      optional $ char 's'
+      _ <- string " bag"
+      _ <- optional $ char 's'
       return $ Just (num, name)
 
     noContents :: Parser (Maybe (Int, String))
@@ -53,7 +53,7 @@ part1 :: DAG -> Int
 part1 graph = count (canReach graph "shiny gold") (Map.keys graph)
   where
     children :: DAG -> String -> [String]
-    children graph bag = nub $ (snd <$> graph Map.! bag) >>= (\name -> name : children graph name)
+    children graph bag = nub ((graph Map.! bag) >>= (\name -> name : children graph name) . snd)
 
     canReach :: DAG -> String -> String -> Bool
     canReach graph to from = to `elem` children graph from

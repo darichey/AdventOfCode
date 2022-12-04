@@ -24,6 +24,7 @@ parse contents =
       s = fmap (\(x, y) -> if ((l !! y) !! x) == '#' then Just (x, - y) else Nothing) points
    in Just $ catMaybes s
 
+between :: (Ord b, Num b) => (b, b) -> (b, b) -> (b, b) -> Bool
 between (ax, ay) (bx, by) (cx, cy) = dot >= 0 && dot <= squaredLength
   where
     dot = (cx - ax) * (bx - ax) + (cy - ay) * (by - ay)
@@ -46,6 +47,7 @@ isVisibleFrom a b asteroids = True `notElem` inTheWay
     s = fmap (\p -> (p, onLine p l)) (removeItem b (removeItem a asteroids))
     inTheWay = fmap snd s
 
+removeItem :: Eq a => a -> [a] -> [a]
 removeItem _ [] = []
 removeItem x (y : ys)
   | x == y = removeItem x ys
@@ -71,7 +73,7 @@ toDestroy :: [Point] -> [Point]
 toDestroy asteroids = fmap cartesian ys
   where
     inPolar :: [(Double, [Polar])]
-    inPolar = fmap ((\p@(Polar r theta) -> (theta, [p])) . polar) asteroids
+    inPolar = fmap ((\p@(Polar _ theta) -> (theta, [p])) . polar) asteroids
     grouped = fmap snd (M.toList $ M.fromListWith (++) inPolar)
     sortedGroups = sortOn (Down . \(Polar _ theta : _) -> theta) (fmap (sortOn (\(Polar r _) -> r)) grouped)
     longestLength = length $ maximumBy (comparing length) sortedGroups

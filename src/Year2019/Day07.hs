@@ -53,7 +53,7 @@ data EndState = NotStarted | Suspended | Terminated deriving (Show, Eq)
 
 state :: Program -> EndState
 state (Program ptr _ _ _) | ptr == -1 = Terminated
-state prog@(Program _ input _ code) =
+state prog@(Program _ input _ _) =
   case (nextIns prog, input) of
     (In _, []) -> Suspended
     _ -> NotStarted
@@ -135,6 +135,7 @@ part1 prog = maximum outputs
     inputs = permutations [0, 1, 2, 3, 4]
     outputs = fmap (\[a, b, c, d, e] -> f prog a b c d e) inputs
 
+f :: Program -> Int -> Int -> Int -> Int -> Int -> Int
 f prog a b c d e =
   let outA = head $ fst $ run (withInput [a, 0] prog)
       outB = head $ fst $ run (withInput [b, outA] prog)
@@ -150,6 +151,7 @@ part2 prog = maximum outputs
     outputs :: [Int]
     outputs = fmap (\[a, b, c, d, e] -> h prog prog prog prog prog a b c d e) inputs
 
+h :: Program -> Program -> Program -> Program -> Program -> Int -> Int -> Int -> Int -> Int -> Int
 h progA progB progC progD progE a b c d e =
   let (outA, progA') = run (withInput [a, 0] progA)
       (outB, progB') = run (withInput [b, head outA] progB)
@@ -158,6 +160,7 @@ h progA progB progC progD progE a b c d e =
       (outE, progE') = run (withInput [e, head outD] progE)
    in g progA' progB' progC' progD' progE' (head outE)
 
+g :: Program -> Program -> Program -> Program -> Program -> Int -> Int
 g progA progB progC progD progE inA =
   let (outA, progA') = run (withInput [inA] progA)
       (outB, progB') = run (withInput [head outA] progB)

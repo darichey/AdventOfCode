@@ -21,11 +21,11 @@ parse = rightToMaybe . P.parse passwords ""
     password :: Parser Password
     password = do
       num1 <- L.decimal
-      char '-'
+      _ <- char '-'
       num2 <- L.decimal
-      spaceChar
+      _ <- spaceChar
       letter <- letterChar
-      string ": "
+      _ <- string ": "
       str <- many alphaNumChar
       return $ Password num1 num2 letter str
 

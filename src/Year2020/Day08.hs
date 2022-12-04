@@ -38,7 +38,7 @@ parse = fmap (Program 0 0 . Vector.fromList) . (rightToMaybe . P.parse (ins `sep
         string "nop" $> Nop
           <|> string "acc" $> Acc
           <|> string "jmp" $> Jmp
-      spaceChar
+      _ <- spaceChar
       num <- L.signed (pure ()) L.decimal
       return $ constructor num
 

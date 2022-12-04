@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-unused-top-binds #-} -- not used because part2 isn't done
 module Year2021.Day08 (solution) where
 
 import Solution (Solution (Solution))

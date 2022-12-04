@@ -30,7 +30,7 @@ parse = rightToMaybe . P.parse (instruction `sepBy` newline) ""
           <|> try (string "toggle ") $> Toggle
 
       p1 <- point
-      string " through "
+      _ <- string " through "
       p2 <- point
 
       return $ change (points p1 p2)
